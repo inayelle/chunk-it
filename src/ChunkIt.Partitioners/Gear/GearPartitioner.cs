@@ -44,7 +44,7 @@ public class GearPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
-        var hash = 0UL;
+        var fingerprint = 0UL;
         var cursor = MinimumChunkSize;
 
         var upper = Math.Min(buffer.Length, MaximumChunkSize);
@@ -52,9 +52,9 @@ public class GearPartitioner : IPartitioner
 
         for (; cursor < mid; cursor++)
         {
-            _gearTable.Fingerprint(ref hash, buffer[cursor]);
+            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
 
-            if ((hash & _strictMask) == 0)
+            if ((fingerprint & _strictMask) == 0)
             {
                 return cursor;
             }
@@ -62,9 +62,9 @@ public class GearPartitioner : IPartitioner
 
         for (; cursor < upper; cursor++)
         {
-            _gearTable.Fingerprint(ref hash, buffer[cursor]);
+            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
 
-            if ((hash & _laxMask) == 0)
+            if ((fingerprint & _laxMask) == 0)
             {
                 return cursor;
             }
