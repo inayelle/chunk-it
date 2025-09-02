@@ -1,7 +1,5 @@
 using ChunkIt.Abstractions;
 using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.MaxP;
-using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Sandbox;
 
@@ -23,31 +21,20 @@ internal static class Partitioners
             normalizationLevel: 3
         );
 
-        yield return new MaxPPartitioner(
+        yield return new CentricGearPartitioner(
+            gearTable: new StaticGearTable(),
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            windowSize: 128
+            normalizationLevel: 2
         );
 
-        yield return new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
+        yield return new SlidingGearPartitioner(
+            gearTable: new StaticGearTable(),
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        );
-
-        yield return new AdaptiveSequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
+            normalizationLevel: 2
         );
     }
 }

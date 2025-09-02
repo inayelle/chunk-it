@@ -5,8 +5,6 @@ using BenchmarkDotNet.Reports;
 using ChunkIt.Abstractions;
 using ChunkIt.Hashers;
 using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.Ram;
-using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Benchmarks;
 
@@ -69,55 +67,30 @@ public class ChunkingBenchmark
     {
         yield return Path.Combine(SourceDirectoryPath, "1MB-original.json");
         yield return Path.Combine(SourceDirectoryPath, "25MB-original.json");
+        yield return "/home/ina/downloads/linux/linux-6.16.4.tar";
     }
 
     public static IEnumerable<object> GenerateChunkReaders()
     {
         yield return new ChunkReader(
             partitioner: new GearPartitioner(
-                gearTable: new RandomGearTable(new Random(42)),
+                gearTable: new StaticGearTable(),
                 minimumChunkSize: MinimumChunkSize,
                 averageChunkSize: AverageChunkSize,
                 maximumChunkSize: MaximumChunkSize,
-                normalizationLevel: 2
+                normalizationLevel: 3
             ),
             hasher: NoneHasher.Instance,
             bufferSize: MaximumChunkSize
         );
 
         yield return new ChunkReader(
-            partitioner: new RamPartitioner(
-                minimumChunkSize: MinimumChunkSize,
-                maximumChunkSize: MaximumChunkSize,
-                windowSize: 64
-            ),
-            hasher: NoneHasher.Instance,
-            bufferSize: MaximumChunkSize
-        );
-
-        yield return new ChunkReader(
-            partitioner: new SequentialPartitioner(
-                mode: SequentialPartitionerMode.Increasing,
+            partitioner: new CentricGearPartitioner(
+                gearTable: new StaticGearTable(),
                 minimumChunkSize: MinimumChunkSize,
                 averageChunkSize: AverageChunkSize,
                 maximumChunkSize: MaximumChunkSize,
-                sequenceLength: 4,
-                skipLength: 16,
-                skipTrigger: 8
-            ),
-            hasher: NoneHasher.Instance,
-            bufferSize: MaximumChunkSize
-        );
-
-        yield return new ChunkReader(
-            partitioner: new SequentialPartitioner(
-                mode: SequentialPartitionerMode.Decreasing,
-                minimumChunkSize: MinimumChunkSize,
-                averageChunkSize: AverageChunkSize,
-                maximumChunkSize: MaximumChunkSize,
-                sequenceLength: 4,
-                skipLength: 12,
-                skipTrigger: 3
+                normalizationLevel: 3
             ),
             hasher: NoneHasher.Instance,
             bufferSize: MaximumChunkSize
