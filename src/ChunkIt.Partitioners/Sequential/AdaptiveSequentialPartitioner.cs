@@ -62,7 +62,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             MinimumChunkSize - _sequenceLength + 1,
             1
         );
-        var backupCursor = -1;
 
         while (cursor < buffer.Length)
         {
@@ -71,11 +70,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             if (_comparator(buffer[cursor - 1], buffer[cursor], strict))
             {
                 window.IncrementSequence();
-
-                if (window.SequenceLength == _sequenceLength - 1)
-                {
-                    backupCursor = cursor;
-                }
 
                 if (window.SequenceLength == _sequenceLength)
                 {
@@ -88,11 +82,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
 
                 if (window.ChaosLength == _skipTrigger)
                 {
-                    if (!strict && backupCursor != -1)
-                    {
-                        return backupCursor;
-                    }
-
                     cursor += _skipLength;
                     window.Reset();
 
@@ -101,11 +90,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             }
 
             cursor += 1;
-        }
-
-        if (backupCursor != -1)
-        {
-            return backupCursor;
         }
 
         return Math.Min(cursor, buffer.Length);
