@@ -4,7 +4,7 @@ namespace ChunkIt.Partitioners.Gear;
 
 public class GearPartitioner : IPartitioner
 {
-    private readonly GearTable _gearTable;
+    private readonly IGearTable _gearTable;
 
     private readonly int _normalizationLevel;
     private readonly ulong _strictMask;
@@ -15,14 +15,14 @@ public class GearPartitioner : IPartitioner
     public int MaximumChunkSize { get; }
 
     public GearPartitioner(
-        int seed,
+        IGearTable gearTable,
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
         int normalizationLevel
     )
     {
-        _gearTable = new GearTable(new Random(seed));
+        _gearTable = gearTable;
 
         MinimumChunkSize = minimumChunkSize;
         AverageChunkSize = averageChunkSize;

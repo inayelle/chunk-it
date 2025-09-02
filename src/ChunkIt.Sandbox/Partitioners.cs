@@ -17,13 +17,22 @@ internal static class Partitioners
 
     public static IEnumerable<IPartitioner> Enumerate()
     {
-        // yield return new GearPartitioner(
-        //     seed: 42,
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize,
-        //     normalizationLevel: 3
-        // );
+        yield return new GearPartitioner(
+            gearTable: new RandomGearTable(new Random(42)),
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 3
+        );
+
+        yield return new GearPartitioner(
+            gearTable: new StaticGearTable(),
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 3
+        );
+
         //
         // yield return new RamPartitioner(
         //     minimumChunkSize: MinimumChunkSize,
@@ -31,45 +40,45 @@ internal static class Partitioners
         //     windowSize: MinimumChunkSize / 2
         // );
 
-        yield return new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        );
-
-        yield return new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Decreasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        );
-
-        yield return new AdaptiveSequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 32,
-            skipLength: 512
-        );
-
-        yield return new AdaptiveSequentialPartitioner(
-            mode: SequentialPartitionerMode.Decreasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 32,
-            skipLength: 512
-        );
+        // yield return new SequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // );
+        //
+        // yield return new SequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Decreasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // );
+        //
+        // yield return new AdaptiveSequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 32,
+        //     skipLength: 512
+        // );
+        //
+        // yield return new AdaptiveSequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Decreasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 32,
+        //     skipLength: 512
+        // );
 
         // yield return new EntropyPartitioner(
         //     minimumChunkSize: MinimumChunkSize,

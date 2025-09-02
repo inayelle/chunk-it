@@ -75,7 +75,7 @@ public class ChunkingBenchmark
     {
         yield return new ChunkReader(
             partitioner: new GearPartitioner(
-                seed: 42,
+                gearTable: new RandomGearTable(new Random(42)),
                 minimumChunkSize: MinimumChunkSize,
                 averageChunkSize: AverageChunkSize,
                 maximumChunkSize: MaximumChunkSize,

@@ -3,13 +3,13 @@ using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Partitioners.Gear;
 
-internal sealed class GearTable
+public class RandomGearTable : IGearTable
 {
     private const int Capacity = 256;
 
     private readonly ulong[] _table;
 
-    public GearTable(Random random)
+    public RandomGearTable(Random random)
     {
         _table = new ulong[Capacity];
 
