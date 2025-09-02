@@ -1,8 +1,6 @@
 using ChunkIt.Abstractions;
-using ChunkIt.Partitioners.Entropy;
 using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.MeanShift;
-using ChunkIt.Partitioners.Ram;
+using ChunkIt.Partitioners.MaxP;
 using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Sandbox;
@@ -23,6 +21,13 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3
+        );
+
+        yield return new MaxPPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            windowSize: 128
         );
 
         yield return new SequentialPartitioner(

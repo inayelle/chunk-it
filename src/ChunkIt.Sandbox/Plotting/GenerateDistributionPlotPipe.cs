@@ -1,7 +1,6 @@
 using AnyKit.Pipelines;
 using ChunkIt.Common.Extensions;
 using ScottPlot;
-using ScottPlot.Plottables;
 using ScottPlot.Statistics;
 
 namespace ChunkIt.Sandbox.Plotting;
