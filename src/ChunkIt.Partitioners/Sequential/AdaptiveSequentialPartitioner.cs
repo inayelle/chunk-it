@@ -1,0 +1,157 @@
+using ChunkIt.Abstractions;
+
+namespace ChunkIt.Partitioners.Sequential;
+
+public class AdaptiveSequentialPartitioner : IPartitioner
+{
+    private delegate bool Comparator(byte previousByte, byte currentByte, bool strict);
+
+    private readonly int _sequenceLength;
+    private readonly int _skipLength;
+    private readonly int _skipTrigger;
+
+    private readonly SequentialPartitionerMode _mode;
+
+    private readonly Comparator _comparator;
+
+    public int MinimumChunkSize { get; }
+    public int AverageChunkSize { get; }
+    public int MaximumChunkSize { get; }
+
+    public AdaptiveSequentialPartitioner(
+        SequentialPartitionerMode mode,
+        int minimumChunkSize,
+        int averageChunkSize,
+        int maximumChunkSize,
+        int sequenceLength,
+        int skipLength,
+        int skipTrigger
+    )
+    {
+        MinimumChunkSize = minimumChunkSize;
+        AverageChunkSize = averageChunkSize;
+        MaximumChunkSize = maximumChunkSize;
+
+        _sequenceLength = sequenceLength;
+        _skipLength = skipLength;
+        _skipTrigger = skipTrigger;
+
+        _mode = mode;
+        _comparator = mode switch
+        {
+            SequentialPartitionerMode.Increasing => IncreasingComparator,
+            SequentialPartitionerMode.Decreasing => DecreasingComparator,
+            _ => throw new ArgumentOutOfRangeException(nameof(mode)),
+        };
+    }
+
+    public int FindChunkLength(ReadOnlySpan<byte> buffer)
+    {
+        if (buffer.Length <= MinimumChunkSize)
+        {
+            return buffer.Length;
+        }
+
+        if (buffer.Length > MaximumChunkSize)
+        {
+            buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
+        }
+
+        var window = new SequentialWindow();
+        var cursor = Math.Max(
+            MinimumChunkSize - _sequenceLength + 1,
+            1
+        );
+        var backupCursor = -1;
+
+        while (cursor < buffer.Length)
+        {
+            var strict = cursor < AverageChunkSize;
+
+            if (_comparator(buffer[cursor - 1], buffer[cursor], strict))
+            {
+                window.IncrementSequence();
+
+                if (window.SequenceLength == _sequenceLength - 1)
+                {
+                    backupCursor = cursor;
+                }
+
+                if (window.SequenceLength == _sequenceLength)
+                {
+                    return cursor;
+                }
+            }
+            else
+            {
+                window.IncrementChaos();
+
+                if (window.ChaosLength == _skipTrigger)
+                {
+                    if (!strict && backupCursor != -1)
+                    {
+                        return backupCursor;
+                    }
+
+                    cursor += _skipLength;
+                    window.Reset();
+
+                    continue;
+                }
+            }
+
+            cursor += 1;
+        }
+
+        if (backupCursor != -1)
+        {
+            return backupCursor;
+        }
+
+        return Math.Min(cursor, buffer.Length);
+    }
+
+    public string Describe()
+    {
+        var builder = new DescriptionBuilder(ToString());
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .AddParameter("seqLength", _sequenceLength)
+            .AddParameter("skipTrigger", _skipTrigger)
+            .AddParameter("skipLength", _skipLength)
+            .Build();
+    }
+
+    public override string ToString()
+    {
+        var modeString = _mode switch
+        {
+            SequentialPartitionerMode.Increasing => "incr",
+            SequentialPartitionerMode.Decreasing => "decr",
+            _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
+        };
+
+        return $"adapt-seq-{modeString}";
+    }
+
+    private static bool IncreasingComparator(byte previousByte, byte currentByte, bool strict)
+    {
+        return strict switch
+        {
+            true => previousByte < currentByte,
+            false => previousByte <= currentByte,
+        };
+    }
+
+    private static bool DecreasingComparator(byte previousByte, byte currentByte, bool strict)
+    {
+        return strict switch
+        {
+            true => previousByte > currentByte,
+            false => previousByte >= currentByte,
+        };
+    }
+}

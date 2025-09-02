@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ChunkIt.Abstractions\ChunkIt.Abstractions.csproj"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ChunkIt.Hashers\ChunkIt.Hashers.csproj"/>
+        <ProjectReference Include="..\ChunkIt.Partitioners\ChunkIt.Partitioners.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Tababular"/>
+        <PackageReference Include="ScottPlot"/>
+        <PackageReference Include="AnyKit.Pipelines"/>
+        <PackageReference Include="System.Linq.Async"/>
+    </ItemGroup>
+
+</Project>
