@@ -17,7 +17,7 @@ internal sealed class FileSystemRoot
         RunId = File.Exists(RunIdPath)
             ? Int32.Parse(File.ReadAllText(RunIdPath)) + 1
             : 0;
-        File.WriteAllText(RunIdPath, RunId.ToString());
+        File.WriteAllText(RunIdPath, $"{RunId:000}");
 
         _chunksPath = Path.Combine(OutputsPath, $"{RunId:000}", "chunks");
         Directory.CreateDirectory(_chunksPath);

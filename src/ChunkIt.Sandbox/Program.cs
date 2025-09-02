@@ -9,6 +9,14 @@ internal static class Program
     public static async Task Main()
     {
         Console.WriteLine($"=== RUN ID: {FileSystemRoot.Instance.RunId:000} ===");
+
+        await Run();
+
+        Console.WriteLine($"=== RUN ID: {FileSystemRoot.Instance.RunId:000} ===");
+    }
+
+    private static async Task Run()
+    {
         var chunkingPipeline = new ChunkingPipeline();
         var plottingPipeline = new PlottingPipeline();
 
