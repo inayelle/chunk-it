@@ -32,11 +32,7 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
             $"{SandboxRuntime.Instance.RunId:000}"
         );
 
-        multiplot.SavePng(
-            Path.Combine(plotPath),
-            width: 1600,
-            height: 900
-        );
+        multiplot.Save(Path.Combine(plotPath));
 
         return next(context);
     }
