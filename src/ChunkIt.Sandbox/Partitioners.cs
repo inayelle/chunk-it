@@ -26,7 +26,7 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 2
+            normalizationLevel: 3
         );
 
         yield return new SlidingGearPartitioner(
@@ -34,7 +34,7 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 2
+            normalizationLevel: 3
         );
     }
 }

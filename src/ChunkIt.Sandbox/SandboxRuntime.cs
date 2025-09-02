@@ -1,6 +1,6 @@
 namespace ChunkIt.Sandbox;
 
-internal sealed class FileSystemRoot
+internal sealed class SandboxRuntime
 {
     private const string OutputsPath = "/storage/ina/workspace/personal/ChunkIt/outputs";
     private const string RunIdPath = $"{OutputsPath}/.runid";
@@ -8,11 +8,11 @@ internal sealed class FileSystemRoot
     private readonly string _chunksPath;
     private readonly string _plotsPath;
 
-    public static FileSystemRoot Instance { get; } = new FileSystemRoot();
+    public static SandboxRuntime Instance { get; } = new SandboxRuntime();
 
     public int RunId { get; }
 
-    private FileSystemRoot()
+    private SandboxRuntime()
     {
         RunId = File.Exists(RunIdPath)
             ? Int32.Parse(File.ReadAllText(RunIdPath)) + 1

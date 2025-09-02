@@ -108,7 +108,6 @@ public class CentricGearPartitioner : IPartitioner
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
             .AddParameter("norm_level", _normalizationLevel)
-            .AddParameter("mask", $"{_mask:B2}")
             .Build();
     }
 

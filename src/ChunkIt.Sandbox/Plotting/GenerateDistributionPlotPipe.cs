@@ -1,3 +1,4 @@
+using System.Text;
 using AnyKit.Pipelines;
 using ChunkIt.Common.Extensions;
 using ScottPlot;
@@ -7,7 +8,95 @@ namespace ChunkIt.Sandbox.Plotting;
 
 internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
 {
-    private static readonly Color[] Colors =
+    public Task Invoke(
+        PlottingContext context,
+        AsyncPipeline<PlottingContext> next
+    )
+    {
+        var multiplot = new AdaptiveMultiplot(
+            context.Reports.Count,
+            columns: Partitioners.Enumerate().Count()
+        );
+
+        for (var index = 0; index < context.Reports.Count; index++)
+        {
+            var report = context.Reports[index];
+
+            var plot = CreatePlot(report, index);
+
+            multiplot.AddPlot(plot);
+        }
+
+        var plotPath = SandboxRuntime.Instance.GetPlotFilePath(
+            "distribution",
+            $"{SandboxRuntime.Instance.RunId:000}"
+        );
+
+        multiplot.SavePng(
+            Path.Combine(plotPath),
+            width: 1600,
+            height: 900
+        );
+
+        return next(context);
+    }
+
+    private static Plot CreatePlot(ChunkingReport report, int index)
+    {
+        var plot = new Plot();
+
+        plot.Title(GenerateReportTitle(report));
+        plot.XLabel("Chunk size");
+        plot.YLabel("Chunks count");
+
+        var histogram = CreateHistogram(report);
+        plot.Add.Histogram(histogram, PlotColors.ForIndex(index));
+
+        plot.Add.Annotation(
+            $"Saved ratio: {report.SavedRatio:F2}%\n" +
+            $"Saved size: {report.SavedBytes.ToHumanReadableSize()}",
+            Alignment.UpperLeft
+        );
+        plot.Add.Annotation(
+            $"Total chunks: {report.TotalChunks}",
+            Alignment.MiddleLeft
+        );
+
+        return plot;
+    }
+
+    private static Histogram CreateHistogram(ChunkingReport report)
+    {
+        var histogram = Histogram.WithBinSize(
+            binSize: 256,
+            firstBin: report.Partitioner.MinimumChunkSize,
+            lastBin: report.Partitioner.MaximumChunkSize
+        );
+
+        var values = report
+            .Chunks
+            .Select(chunk => (double)chunk.Length);
+
+        histogram.AddRange(values);
+
+        return histogram;
+    }
+
+    private static string GenerateReportTitle(ChunkingReport report)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine($"RunId: {SandboxRuntime.Instance.RunId:000}");
+        sb.AppendLine($"{report.FileName} ({report.OriginalFileSize.ToHumanReadableSize()})");
+        sb.Append(report.Partitioner.Describe());
+
+        return sb.ToString();
+    }
+}
+
+file static class PlotColors
+{
+    private static readonly IReadOnlyList<Color> Colors =
     [
         ScottPlot.Colors.Red,
         ScottPlot.Colors.Green,
@@ -20,79 +109,8 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         ScottPlot.Colors.Orange,
     ];
 
-    public Task Invoke(
-        PlottingContext context,
-        AsyncPipeline<PlottingContext> next
-    )
+    public static Color ForIndex(int index)
     {
-        var multiplot = new AdaptiveMultiplot(context.Reports.Count);
-
-        for (var index = 0; index < context.Reports.Count; index++)
-        {
-            var report = context.Reports[index];
-            var plot = new Plot();
-
-            plot.Title($"{report.Partitioner.Describe()}\n(RunId: {FileSystemRoot.Instance.RunId:000})");
-            plot.XLabel("Chunk size");
-            plot.YLabel("Chunks count");
-
-            var histogram = CreateHistogram(
-                report,
-                report.Partitioner.MinimumChunkSize,
-                report.Partitioner.MaximumChunkSize
-            );
-
-            plot.Add.Histogram(histogram, color: Colors[index]);
-            plot.Add.Annotation(
-                report.FileName,
-                Alignment.UpperRight
-            );
-            plot.Add.Annotation(
-                $"Saved ratio: {report.SavedRatio:F2}%; " +
-                $"before: {report.OriginalFileSize.ToHumanReadableSize()}; " +
-                $"after: {report.CompressedFileSize.ToHumanReadableSize()}",
-                Alignment.MiddleRight
-            );
-            plot.Add.Annotation(
-                $"Total chunks: {report.TotalChunks}",
-                Alignment.LowerRight
-            );
-
-            multiplot.AddPlot(plot);
-        }
-
-        var plotPath = FileSystemRoot.Instance.GetPlotFilePath(
-            "distribution",
-            context.SourceFilePath
-        );
-
-        multiplot.SavePng(
-            Path.Combine(plotPath),
-            width: 1600,
-            height: 900
-        );
-
-        return next(context);
-    }
-
-    private static Histogram CreateHistogram(
-        ChunkingReport report,
-        int minimumChunkSize,
-        int maximumChunkSize
-    )
-    {
-        var histogram = Histogram.WithBinSize(
-            binSize: 256,
-            firstBin: minimumChunkSize,
-            lastBin: maximumChunkSize
-        );
-
-        var values = report
-            .Chunks
-            .Select(chunk => (double)chunk.Length);
-
-        histogram.AddRange(values);
-
-        return histogram;
+        return Colors[index];
     }
 }

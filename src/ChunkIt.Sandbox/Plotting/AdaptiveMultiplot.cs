@@ -5,11 +5,11 @@ namespace ChunkIt.Sandbox.Plotting;
 
 internal sealed class AdaptiveMultiplot : Multiplot
 {
-    public AdaptiveMultiplot(int plotsCount)
+    public AdaptiveMultiplot(int plotsCount, int columns)
     {
         Layout = new Grid(
-            columns: 2,
-            rows: (int)Math.Ceiling(plotsCount / 2.0)
+            columns: columns,
+            rows: (int)Math.Ceiling(plotsCount / (double)columns)
         );
 
         Subplots.RemoveAt(0);

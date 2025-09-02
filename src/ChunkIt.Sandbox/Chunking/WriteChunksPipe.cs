@@ -22,7 +22,7 @@ internal sealed class WriteChunksPipe : IChunkingPipe
 
         var chunksTableText = formatter.FormatObjects(objects);
 
-        var chunksFilePath = FileSystemRoot.Instance.GetChunksFilePath(
+        var chunksFilePath = SandboxRuntime.Instance.GetChunksFilePath(
             context.Partitioner.ToString(),
             context.SourceFilePath
         );

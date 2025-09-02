@@ -7,11 +7,11 @@ public static class SizeExtensions
     private static readonly string[] Units =
     [
         "b",
-        "kb",
-        "mb",
-        "gb",
-        "tb",
-        "eb",
+        "Kb",
+        "Mb",
+        "Gb",
+        "Tb",
+        "Eb",
     ];
 
     public static string ToHumanReadableSize(this long bytesCount)
