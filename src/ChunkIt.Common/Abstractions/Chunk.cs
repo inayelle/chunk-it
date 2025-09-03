@@ -2,7 +2,7 @@ using System.Text;
 
 namespace ChunkIt.Common.Abstractions;
 
-public sealed class Chunk
+public readonly struct Chunk
 {
     public required long Id { get; init; }
     public required long Offset { get; init; }
