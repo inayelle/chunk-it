@@ -6,6 +6,4 @@ public interface IPartitioner
     int MaximumChunkSize { get; }
 
     int FindChunkLength(ReadOnlySpan<byte> buffer);
-
-    string Describe();
 }

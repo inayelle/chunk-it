@@ -3,9 +3,10 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioners.Gear;
 
-public class CentricGearPartitioner : IPartitioner
+public class TwinGearPartitioner : IPartitioner
 {
-    private readonly IGearTable _gearTable;
+    private readonly IGearTable _leftGearTable;
+    private readonly IGearTable _rightGearTable;
 
     private readonly int _normalizationLevel;
     private readonly ulong _mask;
@@ -14,19 +15,38 @@ public class CentricGearPartitioner : IPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public CentricGearPartitioner(
+    public TwinGearPartitioner(
         IGearTable gearTable,
+        int minimumChunkSize,
+        int averageChunkSize,
+        int maximumChunkSize,
+        int normalizationLevel
+    ) : this(
+        gearTable,
+        gearTable,
+        minimumChunkSize,
+        averageChunkSize,
+        maximumChunkSize,
+        normalizationLevel
+    )
+    {
+    }
+
+    public TwinGearPartitioner(
+        IGearTable leftGearTable,
+        IGearTable rightGearTable,
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
         int normalizationLevel
     )
     {
-        _gearTable = gearTable;
-
         MinimumChunkSize = minimumChunkSize;
         AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
+
+        _leftGearTable = leftGearTable;
+        _rightGearTable = rightGearTable;
 
         _normalizationLevel = normalizationLevel;
         _mask = GenerateMasks(averageChunkSize, normalizationLevel);
@@ -58,7 +78,7 @@ public class CentricGearPartitioner : IPartitioner
 
             if (leftCursor >= MinimumChunkSize)
             {
-                _gearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
+                _leftGearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
 
                 if ((leftPrint & _mask) == 0)
                 {
@@ -71,7 +91,7 @@ public class CentricGearPartitioner : IPartitioner
 
             if (rightCursor < upper)
             {
-                _gearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
+                _rightGearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
 
                 if ((rightPrint & _mask) == 0)
                 {
@@ -100,26 +120,15 @@ public class CentricGearPartitioner : IPartitioner
         return mask;
     }
 
-    public string Describe()
+    public override string ToString()
     {
-        var builder = new DescriptionBuilder("centric-gear");
+        var builder = new DescriptionBuilder("twin-gear");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
             .AddParameter("norm_level", _normalizationLevel)
-            .Build();
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("centric-gear");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
             .Build();
     }
 }

@@ -94,20 +94,6 @@ public class SequentialPartitioner : IPartitioner
         return Math.Min(cursor, buffer.Length);
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder(ToString());
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("seqLength", _sequenceLength)
-            .AddParameter("skipTrigger", _skipTrigger)
-            .AddParameter("skipLength", _skipLength)
-            .Build();
-    }
-
     public override string ToString()
     {
         var modeString = _mode switch
@@ -123,6 +109,9 @@ public class SequentialPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("seqLength", _sequenceLength)
+            .AddParameter("skipTrigger", _skipTrigger)
+            .AddParameter("skipLength", _skipLength)
             .Build();
     }
 }

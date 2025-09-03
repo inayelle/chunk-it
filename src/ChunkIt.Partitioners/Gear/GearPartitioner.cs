@@ -87,18 +87,6 @@ public class GearPartitioner : IPartitioner
         return (strictMask, laxMask);
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("gear");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("norm_level", _normalizationLevel)
-            .Build();
-    }
-
     public override string ToString()
     {
         var builder = new DescriptionBuilder("gear");
@@ -107,6 +95,7 @@ public class GearPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("norm_level", _normalizationLevel)
             .Build();
     }
 }

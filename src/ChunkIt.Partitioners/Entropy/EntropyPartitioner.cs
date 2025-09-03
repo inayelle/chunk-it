@@ -166,20 +166,6 @@ public class EntropyPartitioner : IPartitioner
         return upper;
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("entropy");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .AddParameter("low_thresh", _lowThreshold)
-            .AddParameter("high_thresh", _highThreshold)
-            .Build();
-    }
-
     private long CalculateEntropy(int currentLength, long currentSum)
     {
         var log2L = _log2LengthQ16[currentLength];
@@ -196,6 +182,9 @@ public class EntropyPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("window", _windowSize)
+            .AddParameter("low_thresh", _lowThreshold)
+            .AddParameter("high_thresh", _highThreshold)
             .Build();
     }
 }

@@ -42,16 +42,13 @@ public sealed class MeanShiftPartitioner : IPartitioner
         var upper = Math.Min(len, MaximumChunkSize);
         var mid = Math.Min(upper, AverageChunkSize);
 
-        // Стартуємо з першого дозволеного байта
         var cursor = MinimumChunkSize;
 
-        // Кільце і статистики для вікна попередніх байтів
         var L = Math.Min(_windowSize, cursor);
         Span<byte> ring = stackalloc byte[_windowSize];
         long sum = 0, sumSq = 0;
         var head = 0;
 
-        // Заповнюємо попереднє вікно [cursor - L .. cursor - 1]
         var start = cursor - L;
         for (var i = start; i < cursor; i++)
         {
@@ -65,10 +62,8 @@ public sealed class MeanShiftPartitioner : IPartitioner
 
         var badCount = 0;
 
-        // ---- Фаза до avg (строгіший поріг) ----
         while (cursor < mid)
         {
-            // mean/var на основі попереднього вікна (L >= 1)
             var mu = (double)sum / L;
             double var;
             if (L > 1)
@@ -93,7 +88,7 @@ public sealed class MeanShiftPartitioner : IPartitioner
                 {
                     var cut = cursor - badCount;
                     if (cut < MinimumChunkSize) cut = MinimumChunkSize;
-                    return cut; // межа на останньому "гарному" байті
+                    return cut;
                 }
             }
             else
@@ -101,7 +96,6 @@ public sealed class MeanShiftPartitioner : IPartitioner
                 badCount = 0;
             }
 
-            // Зсунути вікно: додаємо поточний, викидаємо найстаріший (якщо L == W)
             var inByte = buffer[cursor];
             if (L == _windowSize)
             {
@@ -124,7 +118,6 @@ public sealed class MeanShiftPartitioner : IPartitioner
             cursor++;
         }
 
-        // ---- Фаза після avg (м’якший поріг) ----
         while (cursor < upper)
         {
             var mu = (double)sum / L;
@@ -181,22 +174,7 @@ public sealed class MeanShiftPartitioner : IPartitioner
             cursor++;
         }
 
-        // Нічого не спрацювало — форс на upper
         return upper;
-    }
-
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("mean-shift");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .AddParameter("kPre", _kPre)
-            .AddParameter("kPost", _kPost)
-            .Build();
     }
 
     public override string ToString()
@@ -207,6 +185,9 @@ public sealed class MeanShiftPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("window", _windowSize)
+            .AddParameter("kPre", _kPre)
+            .AddParameter("kPost", _kPost)
             .Build();
     }
 }

@@ -74,18 +74,6 @@ public class MaxPPartitioner : IPartitioner
         return buffer.Length;
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("maxp");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .Build();
-    }
-
     public override string ToString()
     {
         var builder = new DescriptionBuilder("maxp");
@@ -94,6 +82,7 @@ public class MaxPPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("window", _windowSize)
             .Build();
     }
 }

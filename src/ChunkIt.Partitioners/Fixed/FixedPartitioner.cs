@@ -22,15 +22,6 @@ public class FixedPartitioner : IPartitioner
             : _chunkSize;
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("fixed");
-
-        return builder
-            .AddParameter("size", _chunkSize)
-            .Build();
-    }
-
     public override string ToString()
     {
         var builder = new DescriptionBuilder("fixed");

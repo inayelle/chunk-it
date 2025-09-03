@@ -130,18 +130,6 @@ public class SlidingGearPartitioner : IPartitioner
         return masks;
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("sliding-gear");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("norm_level", _normalizationLevel)
-            .Build();
-    }
-
     public override string ToString()
     {
         var builder = new DescriptionBuilder("sliding-gear");
@@ -150,6 +138,7 @@ public class SlidingGearPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("norm_level", _normalizationLevel)
             .Build();
     }
 }

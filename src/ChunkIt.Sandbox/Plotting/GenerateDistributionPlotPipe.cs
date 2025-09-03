@@ -84,7 +84,7 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
 
         sb.AppendLine($"RunId: {SandboxRuntime.Instance.RunId:000}");
         sb.AppendLine($"{report.FileName} ({report.OriginalFileSize.ToHumanReadableSize()})");
-        sb.Append(report.Partitioner.Describe());
+        sb.Append(report.Partitioner);
 
         return sb.ToString();
     }

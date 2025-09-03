@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace ChunkIt.Partitioners.Gear;
@@ -91,8 +92,28 @@ public class StaticGearTable : IGearTable
         0x86f00167eda1f9bc, 0x3a6f8b8f8a3790c9, 0x7845bb4a1c3bfbbb,
         0xc875ab077f66cf23, 0xa68b83d8d69b97ee, 0xb967199139f9a0a6,
         0x8a3a1a4d3de036b7, 0xdf3c5c0c017232a4, 0x8e60e63156990620,
-        0xd31b4b03145f02fa
+        0xd31b4b03145f02fa,
     ];
+
+    public StaticGearTable()
+    {
+    }
+
+    public StaticGearTable(int rotations)
+    {
+        switch (rotations)
+        {
+            case < 0 or > 32:
+                throw new ArgumentException("Rotations must be in range [0; 32].", nameof(rotations));
+            case 0:
+                return;
+        }
+
+        for (var index = 0; index < _table.Length; index++)
+        {
+            _table[index] = BitOperations.RotateRight(_table[index], rotations);
+        }
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Fingerprint(ref ulong fingerprint, byte value)

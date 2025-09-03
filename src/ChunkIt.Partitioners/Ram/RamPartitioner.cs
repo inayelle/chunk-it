@@ -56,17 +56,6 @@ public class RamPartitioner : IPartitioner
         return cursor;
     }
 
-    public string Describe()
-    {
-        var builder = new DescriptionBuilder("ram");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .Build();
-    }
-
     public override string ToString()
     {
         var builder = new DescriptionBuilder("ram");
@@ -74,6 +63,7 @@ public class RamPartitioner : IPartitioner
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("window", _windowSize)
             .Build();
     }
 }

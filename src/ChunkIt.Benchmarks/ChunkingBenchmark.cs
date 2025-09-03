@@ -89,7 +89,7 @@ public class ChunkingBenchmark
                 normalizationLevel: 3
             );
 
-            yield return new CentricGearPartitioner(
+            yield return new TwinGearPartitioner(
                 gearTable: new StaticGearTable(),
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,

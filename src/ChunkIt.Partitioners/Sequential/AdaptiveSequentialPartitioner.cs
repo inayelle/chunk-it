@@ -96,7 +96,7 @@ public class AdaptiveSequentialPartitioner : IPartitioner
         return Math.Min(cursor, buffer.Length);
     }
 
-    public string Describe()
+    public override string ToString()
     {
         var modeString = _mode switch
         {
@@ -114,24 +114,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             .AddParameter("seqLength", _sequenceLength)
             .AddParameter("skipTrigger", _skipTrigger)
             .AddParameter("skipLength", _skipLength)
-            .Build();
-    }
-
-    public override string ToString()
-    {
-        var modeString = _mode switch
-        {
-            SequentialPartitionerMode.Increasing => "incr",
-            SequentialPartitionerMode.Decreasing => "decr",
-            _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
-        };
-
-        var builder = new DescriptionBuilder($"adapt-seq-{modeString}");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
             .Build();
     }
 }
