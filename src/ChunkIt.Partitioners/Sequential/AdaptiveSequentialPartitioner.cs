@@ -111,9 +111,9 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
-            .AddParameter("seqLength", _sequenceLength)
-            .AddParameter("skipTrigger", _skipTrigger)
-            .AddParameter("skipLength", _skipLength)
+            .AddParameter("seqLen", _sequenceLength)
+            .AddParameter("skipTrig", _skipTrigger)
+            .AddParameter("skipLen", _skipLength)
             .Build();
     }
 }

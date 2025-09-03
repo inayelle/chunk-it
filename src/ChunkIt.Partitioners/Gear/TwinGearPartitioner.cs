@@ -124,11 +124,14 @@ public class TwinGearPartitioner : IPartitioner
     {
         var builder = new DescriptionBuilder("twin-gear");
 
+        var gearMode = _leftGearTable == _rightGearTable ? "same" : "diff";
+
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
             .AddParameter("norm_level", _normalizationLevel)
+            .AddParameter("gear_mode", gearMode)
             .Build();
     }
 }

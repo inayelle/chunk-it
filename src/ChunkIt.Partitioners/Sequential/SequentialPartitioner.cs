@@ -103,15 +103,15 @@ public class SequentialPartitioner : IPartitioner
             _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
         };
 
-        var builder = new DescriptionBuilder($"adapt-seq-{modeString}");
+        var builder = new DescriptionBuilder($"seq-{modeString}");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
-            .AddParameter("seqLength", _sequenceLength)
-            .AddParameter("skipTrigger", _skipTrigger)
-            .AddParameter("skipLength", _skipLength)
+            .AddParameter("seqLen", _sequenceLength)
+            .AddParameter("skipTrig", _skipTrigger)
+            .AddParameter("skipLen", _skipLength)
             .Build();
     }
 }
