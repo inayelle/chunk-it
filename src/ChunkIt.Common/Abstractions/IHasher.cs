@@ -1,4 +1,4 @@
-namespace ChunkIt.Abstractions;
+namespace ChunkIt.Common.Abstractions;
 
 public interface IHasher
 {

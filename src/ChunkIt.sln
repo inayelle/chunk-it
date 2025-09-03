@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChunkIt.Sandbox", "ChunkIt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChunkIt.Benchmarks", "ChunkIt.Benchmarks\ChunkIt.Benchmarks.csproj", "{59E54230-29AC-4DB8-857E-F5C3058C8432}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChunkIt.Abstractions", "ChunkIt.Abstractions\ChunkIt.Abstractions.csproj", "{D7ECA9A2-078C-4F4A-8766-C3E69815FA01}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChunkIt.Hashers", "ChunkIt.Hashers\ChunkIt.Hashers.csproj", "{3E398E2F-9232-465B-9F74-4590C44F4861}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChunkIt.Common", "ChunkIt.Common\ChunkIt.Common.csproj", "{63EC73EC-0353-473F-8CA4-3317DF07CDC8}"
@@ -32,10 +30,6 @@ Global
 		{59E54230-29AC-4DB8-857E-F5C3058C8432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59E54230-29AC-4DB8-857E-F5C3058C8432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59E54230-29AC-4DB8-857E-F5C3058C8432}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7ECA9A2-078C-4F4A-8766-C3E69815FA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7ECA9A2-078C-4F4A-8766-C3E69815FA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7ECA9A2-078C-4F4A-8766-C3E69815FA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7ECA9A2-078C-4F4A-8766-C3E69815FA01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E398E2F-9232-465B-9F74-4590C44F4861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E398E2F-9232-465B-9F74-4590C44F4861}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E398E2F-9232-465B-9F74-4590C44F4861}.Release|Any CPU.ActiveCfg = Release|Any CPU

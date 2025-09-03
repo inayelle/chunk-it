@@ -1,5 +1,5 @@
 using AnyKit.Pipelines;
-using ChunkIt.Abstractions;
+using ChunkIt.Common;
 using ChunkIt.Hashers;
 
 namespace ChunkIt.Sandbox.Chunking;

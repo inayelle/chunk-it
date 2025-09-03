@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using ChunkIt.Abstractions;
+using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Hashers;
 

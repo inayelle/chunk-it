@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ChunkIt.Abstractions\ChunkIt.Abstractions.csproj"/>
+        <ProjectReference Include="..\ChunkIt.Common\ChunkIt.Common.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
-using ChunkIt.Common;
+using ChunkIt.Common.Abstractions;
 using ChunkIt.Common.Extensions;
 
-namespace ChunkIt.Abstractions;
+namespace ChunkIt.Common;
 
 public sealed class ChunkReader
 {

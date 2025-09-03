@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace ChunkIt.Abstractions;
+namespace ChunkIt.Common.Abstractions;
 
 public sealed class Chunk
 {

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using ChunkIt.Abstractions;
+using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Hashers;
 

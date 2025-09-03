@@ -1,4 +1,4 @@
-using ChunkIt.Abstractions;
+using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Sandbox.Chunking;
 

@@ -1,4 +1,4 @@
-using ChunkIt.Abstractions;
+using ChunkIt.Common.Abstractions;
 using ChunkIt.Partitioners.Entropy;
 using ChunkIt.Partitioners.Gear;
 using ChunkIt.Partitioners.MeanShift;

@@ -1,5 +1,6 @@
 using System.Numerics;
-using ChunkIt.Abstractions;
+using ChunkIt.Common;
+using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioners.Gear;
 
