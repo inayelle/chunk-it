@@ -17,13 +17,13 @@ internal static class Partitioners
 
     public static IEnumerable<IPartitioner> Enumerate()
     {
-        yield return new GearPartitioner(
-            gearTable: new StaticGearTable(),
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 3
-        );
+        // yield return new GearPartitioner(
+        //     gearTable: new StaticGearTable(),
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     normalizationLevel: 3
+        // );
 
         yield return new TwinGearPartitioner(
             gearTable: new StaticGearTable(rotations: 0),
@@ -42,25 +42,25 @@ internal static class Partitioners
             normalizationLevel: 3
         );
 
-        yield return new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        );
-
-        yield return new AdaptiveSequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        );
+        // yield return new SequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // );
+        //
+        // yield return new AdaptiveSequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // );
 
         // yield return new SlidingGearPartitioner(
         //     gearTable: new StaticGearTable(),
