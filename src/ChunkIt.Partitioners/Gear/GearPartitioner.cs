@@ -100,6 +100,12 @@ public class GearPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "gear";
+        var builder = new DescriptionBuilder("gear");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

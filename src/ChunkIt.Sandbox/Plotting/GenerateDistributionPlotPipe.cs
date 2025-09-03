@@ -14,8 +14,8 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
     )
     {
         var multiplot = new AdaptiveMultiplot(
-            context.Reports.Count,
-            columns: Partitioners.Enumerate().Count()
+            columns: Partitioners.Enumerate().Count(),
+            rows: SourceFilePaths.Enumerate().Count()
         );
 
         for (var index = 0; index < context.Reports.Count; index++)
@@ -103,10 +103,30 @@ file static class PlotColors
         ScottPlot.Colors.Purple,
         ScottPlot.Colors.Beige,
         ScottPlot.Colors.Orange,
+        ScottPlot.Colors.Turquoise,
+        ScottPlot.Colors.Silver,
+        ScottPlot.Colors.Orchid,
+        ScottPlot.Colors.Crimson,
+        ScottPlot.Colors.Cyan,
+        ScottPlot.Colors.Gold,
+        ScottPlot.Colors.AliceBlue,
+        ScottPlot.Colors.IndianRed,
+        ScottPlot.Colors.Navy,
+        ScottPlot.Colors.FireBrick,
+        ScottPlot.Colors.Magenta,
+        ScottPlot.Colors.Teal,
+        ScottPlot.Colors.SandyBrown,
+        ScottPlot.Colors.Olive,
     ];
 
     public static Color ForIndex(int index)
     {
+        if (index >= Colors.Count)
+        {
+            Console.Error.WriteLine($"No suitable color for index {index}. Falling back to random.");
+            return Color.RandomHue();
+        }
+
         return Colors[index];
     }
 }

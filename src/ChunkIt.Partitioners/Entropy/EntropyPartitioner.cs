@@ -189,6 +189,12 @@ public class EntropyPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "entropy";
+        var builder = new DescriptionBuilder("entropy");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

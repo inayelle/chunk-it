@@ -68,6 +68,11 @@ public class RamPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "ram";
+        var builder = new DescriptionBuilder("ram");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

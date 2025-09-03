@@ -4,7 +4,12 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Reports;
 using ChunkIt.Abstractions;
 using ChunkIt.Hashers;
+using ChunkIt.Partitioners.Entropy;
+using ChunkIt.Partitioners.Fixed;
 using ChunkIt.Partitioners.Gear;
+using ChunkIt.Partitioners.MeanShift;
+using ChunkIt.Partitioners.Ram;
+using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Benchmarks;
 
@@ -12,30 +17,26 @@ namespace ChunkIt.Benchmarks;
 [Config(typeof(ChunkingBenchmarkConfig))]
 public class ChunkingBenchmark
 {
-    private const string SourceDirectoryPath = "/storage/ina/workspace/personal/ChunkIt/inputs";
-
     private const int Kilobyte = 1024;
 
-    private const int MinimumChunkSize = 1 * Kilobyte;
-    private const int AverageChunkSize = 4 * Kilobyte;
-    private const int MaximumChunkSize = 8 * Kilobyte;
-
-    private Stream _sourceFileStream;
+    private FileStream _sourceFileStream;
 
     [ParamsSource(nameof(GenerateSourceFilePaths))]
-    public string SourceFilePath { get; set; }
+    public SourceFilePath SourceFilePath { get; set; }
 
-    [ParamsSource(nameof(GenerateChunkReaders))]
-    public ChunkReader ChunkReader { get; set; }
+    [ParamsSource(nameof(GeneratePartitioners))]
+    public IPartitioner Partitioner { get; set; }
 
     [Benchmark]
     public async Task<ulong> Run()
     {
         _sourceFileStream.Seek(0, SeekOrigin.Begin);
 
+        var reader = new ChunkReader(Partitioner, NoneHasher.Instance, 32 * Kilobyte);
+
         ulong length = 0;
 
-        await foreach (var chunk in ChunkReader.ReadAsync(_sourceFileStream).ConfigureAwait(false))
+        await foreach (var chunk in reader.ReadAsync(_sourceFileStream).ConfigureAwait(false))
         {
             length += (ulong)chunk.Length;
         }
@@ -46,15 +47,12 @@ public class ChunkingBenchmark
     [GlobalSetup]
     public void GlobalSetup()
     {
-        using var fileStream = new FileStream(SourceFilePath,
+        _sourceFileStream = new FileStream(
+            SourceFilePath.Path,
             FileMode.Open,
             FileAccess.Read,
             FileShare.None
         );
-
-        _sourceFileStream = new MemoryStream();
-
-        fileStream.CopyTo(_sourceFileStream);
     }
 
     [GlobalCleanup]
@@ -63,42 +61,114 @@ public class ChunkingBenchmark
         _sourceFileStream.Dispose();
     }
 
-    public static IEnumerable<object> GenerateSourceFilePaths()
+    public static IEnumerable<SourceFilePath> GenerateSourceFilePaths()
     {
-        yield return Path.Combine(SourceDirectoryPath, "1MB-original.json");
-        yield return Path.Combine(SourceDirectoryPath, "25MB-original.json");
-        yield return "/home/ina/downloads/linux/linux-6.16.4.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-6.16.4.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-combined.tar";
     }
 
-    public static IEnumerable<object> GenerateChunkReaders()
+    public static IEnumerable<IPartitioner> GeneratePartitioners()
     {
-        yield return new ChunkReader(
-            partitioner: new GearPartitioner(
-                gearTable: new StaticGearTable(),
-                minimumChunkSize: MinimumChunkSize,
-                averageChunkSize: AverageChunkSize,
-                maximumChunkSize: MaximumChunkSize,
-                normalizationLevel: 3
-            ),
-            hasher: NoneHasher.Instance,
-            bufferSize: MaximumChunkSize
-        );
+        int[] minimumChunkSizes = [1 * Kilobyte, 2 * Kilobyte, 4 * Kilobyte];
 
-        yield return new ChunkReader(
-            partitioner: new CentricGearPartitioner(
+        foreach (var minimumChunkSize in minimumChunkSizes)
+        {
+            var maximumChunkSize = minimumChunkSize * 8;
+            var averageChunkSize = minimumChunkSize + (maximumChunkSize - minimumChunkSize) / 2;
+
+            yield return new FixedPartitioner(
+                chunkSize: averageChunkSize
+            );
+
+            yield return new GearPartitioner(
                 gearTable: new StaticGearTable(),
-                minimumChunkSize: MinimumChunkSize,
-                averageChunkSize: AverageChunkSize,
-                maximumChunkSize: MaximumChunkSize,
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
                 normalizationLevel: 3
-            ),
-            hasher: NoneHasher.Instance,
-            bufferSize: MaximumChunkSize
-        );
+            );
+
+            yield return new CentricGearPartitioner(
+                gearTable: new StaticGearTable(),
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                normalizationLevel: 3
+            );
+
+            yield return new SlidingGearPartitioner(
+                gearTable: new StaticGearTable(),
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                normalizationLevel: 3
+            );
+
+            yield return new RamPartitioner(
+                minimumChunkSize: minimumChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                windowSize: averageChunkSize
+            );
+
+            yield return new SequentialPartitioner(
+                mode: SequentialPartitionerMode.Increasing,
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                sequenceLength: 5,
+                skipLength: 50,
+                skipTrigger: 256
+            );
+
+            yield return new SequentialPartitioner(
+                mode: SequentialPartitionerMode.Decreasing,
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                sequenceLength: 5,
+                skipLength: 50,
+                skipTrigger: 256
+            );
+
+            yield return new AdaptiveSequentialPartitioner(
+                mode: SequentialPartitionerMode.Increasing,
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                sequenceLength: 5,
+                skipLength: 50,
+                skipTrigger: 256
+            );
+
+            yield return new AdaptiveSequentialPartitioner(
+                mode: SequentialPartitionerMode.Decreasing,
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                sequenceLength: 5,
+                skipLength: 50,
+                skipTrigger: 256
+            );
+
+            yield return new MeanShiftPartitioner(
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize
+            );
+
+            yield return new EntropyPartitioner(
+                minimumChunkSize: minimumChunkSize,
+                averageChunkSize: averageChunkSize,
+                maximumChunkSize: maximumChunkSize,
+                windowSize: 64,
+                lowThresholdBits: 1.25,
+                highThresholdBits: 1.85
+            );
+        }
     }
 }
 
-file sealed class ChunkingBenchmarkConfig : ManualConfig
+public sealed class ChunkingBenchmarkConfig : ManualConfig
 {
     public ChunkingBenchmarkConfig()
     {
@@ -107,5 +177,25 @@ file sealed class ChunkingBenchmarkConfig : ManualConfig
         AddDiagnoser(new EventPipeProfiler(EventPipeProfile.CpuSampling));
 
         WithOptions(ConfigOptions.DisableLogFile);
+    }
+}
+
+public sealed class SourceFilePath
+{
+    public string Path { get; }
+
+    public SourceFilePath(string path)
+    {
+        Path = path;
+    }
+
+    public override string ToString()
+    {
+        return System.IO.Path.GetFileName(Path);
+    }
+
+    public static implicit operator SourceFilePath(string path)
+    {
+        return new SourceFilePath(path);
     }
 }

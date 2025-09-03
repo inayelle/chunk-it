@@ -87,6 +87,12 @@ public class MaxPPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "maxp";
+        var builder = new DescriptionBuilder("maxp");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

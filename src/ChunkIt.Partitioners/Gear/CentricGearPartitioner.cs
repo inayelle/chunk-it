@@ -113,6 +113,12 @@ public class CentricGearPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "centric-gear";
+        var builder = new DescriptionBuilder("centric-gear");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

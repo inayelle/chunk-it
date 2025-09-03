@@ -93,6 +93,16 @@ public class SequentialPartitioner : IPartitioner
         return Math.Min(cursor, buffer.Length);
     }
 
+    private static bool IncreasingComparator(byte previousByte, byte currentByte)
+    {
+        return previousByte < currentByte;
+    }
+
+    private static bool DecreasingComparator(byte previousByte, byte currentByte)
+    {
+        return previousByte > currentByte;
+    }
+
     public string Describe()
     {
         var builder = new DescriptionBuilder(ToString());
@@ -116,16 +126,12 @@ public class SequentialPartitioner : IPartitioner
             _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
         };
 
-        return $"seq-{modeString}";
-    }
+        var builder = new DescriptionBuilder($"adapt-seq-{modeString}");
 
-    private static bool IncreasingComparator(byte previousByte, byte currentByte)
-    {
-        return previousByte < currentByte;
-    }
-
-    private static bool DecreasingComparator(byte previousByte, byte currentByte)
-    {
-        return previousByte > currentByte;
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

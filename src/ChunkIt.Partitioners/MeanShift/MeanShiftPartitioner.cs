@@ -200,6 +200,12 @@ public sealed class MeanShiftPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "mean-shift";
+        var builder = new DescriptionBuilder("mean-shift");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

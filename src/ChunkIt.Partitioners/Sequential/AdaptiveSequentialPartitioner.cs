@@ -95,9 +95,34 @@ public class AdaptiveSequentialPartitioner : IPartitioner
         return Math.Min(cursor, buffer.Length);
     }
 
+    private static bool IncreasingComparator(byte previousByte, byte currentByte, bool strict)
+    {
+        return strict switch
+        {
+            true => previousByte < currentByte,
+            false => previousByte <= currentByte,
+        };
+    }
+
+    private static bool DecreasingComparator(byte previousByte, byte currentByte, bool strict)
+    {
+        return strict switch
+        {
+            true => previousByte > currentByte,
+            false => previousByte >= currentByte,
+        };
+    }
+
     public string Describe()
     {
-        var builder = new DescriptionBuilder(ToString());
+        var modeString = _mode switch
+        {
+            SequentialPartitionerMode.Increasing => "incr",
+            SequentialPartitionerMode.Decreasing => "decr",
+            _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
+        };
+
+        var builder = new DescriptionBuilder($"adapt-seq-{modeString}");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
@@ -118,24 +143,12 @@ public class AdaptiveSequentialPartitioner : IPartitioner
             _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
         };
 
-        return $"adapt-seq-{modeString}";
-    }
+        var builder = new DescriptionBuilder($"adapt-seq-{modeString}");
 
-    private static bool IncreasingComparator(byte previousByte, byte currentByte, bool strict)
-    {
-        return strict switch
-        {
-            true => previousByte < currentByte,
-            false => previousByte <= currentByte,
-        };
-    }
-
-    private static bool DecreasingComparator(byte previousByte, byte currentByte, bool strict)
-    {
-        return strict switch
-        {
-            true => previousByte > currentByte,
-            false => previousByte >= currentByte,
-        };
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }

@@ -143,6 +143,12 @@ public class SlidingGearPartitioner : IPartitioner
 
     public override string ToString()
     {
-        return "sliding-gear";
+        var builder = new DescriptionBuilder("sliding-gear");
+
+        return builder
+            .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
+            .AddParameter("max", MaximumChunkSize)
+            .Build();
     }
 }
