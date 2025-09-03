@@ -40,8 +40,8 @@ public class AdaptiveSequentialPartitioner : IPartitioner
         _mode = mode;
         _comparator = mode switch
         {
-            SequentialPartitionerMode.Increasing => IncreasingComparator,
-            SequentialPartitionerMode.Decreasing => DecreasingComparator,
+            SequentialPartitionerMode.Increasing => SequentialComparators.IsIncreasing,
+            SequentialPartitionerMode.Decreasing => SequentialComparators.IsDecreasing,
             _ => throw new ArgumentOutOfRangeException(nameof(mode)),
         };
     }
@@ -94,24 +94,6 @@ public class AdaptiveSequentialPartitioner : IPartitioner
         }
 
         return Math.Min(cursor, buffer.Length);
-    }
-
-    private static bool IncreasingComparator(byte previousByte, byte currentByte, bool strict)
-    {
-        return strict switch
-        {
-            true => previousByte < currentByte,
-            false => previousByte <= currentByte,
-        };
-    }
-
-    private static bool DecreasingComparator(byte previousByte, byte currentByte, bool strict)
-    {
-        return strict switch
-        {
-            true => previousByte > currentByte,
-            false => previousByte >= currentByte,
-        };
     }
 
     public string Describe()
