@@ -31,10 +31,10 @@ internal sealed class AdaptiveMultiplot : Multiplot
         return new AdaptiveMultiplot(rows, columns);
     }
 
-    public void Save(string path)
+    public void Save(string path, int extraWidth = 0, int extraHeight = 0)
     {
-        var plotWidth = 700 * Columns;
-        var plotHeight = 500 * Rows;
+        var plotWidth = 700 * Columns + extraWidth;
+        var plotHeight = 500 * Rows + extraHeight;
 
         this.SavePng(
             Path.Combine(path),

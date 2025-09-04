@@ -11,6 +11,7 @@ internal sealed class PlottingPipeline
         var builder = new AsyncPipelineBuilder<PlottingContext>();
 
         builder.UsePipe(new GenerateDistributionPlotPipe().Invoke);
+        builder.UsePipe(new GenerateDeduplicationPlotPipe().Invoke);
 
         _pipeline = builder.Build();
     }

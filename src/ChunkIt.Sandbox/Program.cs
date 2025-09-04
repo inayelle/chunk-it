@@ -21,9 +21,9 @@ internal static class Program
         var plottingPipeline = new PlottingPipeline();
         var chunkingReports = new List<ChunkingReport>();
 
-        foreach (var sourceFilePath in SourceFilePaths.Enumerate())
+        foreach (var sourceFilePath in SourceFiles.Values)
         {
-            foreach (var partitioner in Partitioners.Enumerate())
+            foreach (var partitioner in Partitioners.Values)
             {
                 var chunkingContext = new ChunkingContext(partitioner, sourceFilePath);
 

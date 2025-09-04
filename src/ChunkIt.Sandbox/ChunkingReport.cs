@@ -4,7 +4,7 @@ namespace ChunkIt.Sandbox;
 
 internal sealed class ChunkingReport
 {
-    public required string FileName { get; init; }
+    public required SourceFile SourceFile { get; init; }
     public required IPartitioner Partitioner { get; init; }
     public required IReadOnlyCollection<Chunk> Chunks { get; init; }
 

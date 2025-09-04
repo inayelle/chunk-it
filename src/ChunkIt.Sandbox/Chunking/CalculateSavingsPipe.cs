@@ -9,7 +9,7 @@ internal sealed class CalculateSavingsPipe : IChunkingPipe
         AsyncPipeline<ChunkingContext, ChunkingReport> next
     )
     {
-        var originalFileSize = new FileInfo(context.SourceFilePath).Length;
+        var originalFileSize = context.SourceFile.Size;
 
         var compressedFileSize = context
             .Chunks

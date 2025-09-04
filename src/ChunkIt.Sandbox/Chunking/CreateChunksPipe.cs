@@ -14,7 +14,7 @@ internal sealed class CreateChunksPipe : IChunkingPipe
     )
     {
         await using var sourceFileStream = new FileStream(
-            context.SourceFilePath,
+            context.SourceFile.Path,
             FileMode.Open,
             FileAccess.Read,
             FileShare.Read,

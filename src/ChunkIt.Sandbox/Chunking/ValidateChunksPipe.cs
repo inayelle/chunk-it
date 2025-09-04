@@ -9,9 +9,7 @@ internal sealed class ValidateChunksPipe : IChunkingPipe
         AsyncPipeline<ChunkingContext, ChunkingReport> next
     )
     {
-        var fileInfo = new FileInfo(context.SourceFilePath);
-
-        var expectedFileSize = fileInfo.Length;
+        var expectedFileSize = context.SourceFile.Size;
         var actualFileSize = context.Chunks.Sum(chunk => (long)chunk.Length);
 
         var isValid = expectedFileSize == actualFileSize;

@@ -26,17 +26,13 @@ internal sealed class SandboxRuntime
         Directory.CreateDirectory(_plotsPath);
     }
 
-    public string GetChunksFilePath(string partitionerName, string sourceFilePath)
+    public string GetChunksFilePath(string partitionerName, SourceFile sourceFile)
     {
-        var sourceFileName = Path.GetFileName(sourceFilePath);
-
-        return Path.Combine(_chunksPath, $"{sourceFileName}.{partitionerName}.chunks");
+        return Path.Combine(_chunksPath, $"{sourceFile.Name}.{partitionerName}.chunks");
     }
 
-    public string GetPlotFilePath(string plotName, string sourceFilePath)
+    public string GetPlotFilePath(string plotName)
     {
-        var sourceFileName = Path.GetFileName(sourceFilePath);
-
-        return Path.Combine(_plotsPath, $"{sourceFileName}.{plotName}.png");
+        return Path.Combine(_plotsPath, $"{RunId:000}.{plotName}.png");
     }
 }

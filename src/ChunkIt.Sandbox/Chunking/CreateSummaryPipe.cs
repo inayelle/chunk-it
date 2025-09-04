@@ -11,7 +11,7 @@ internal sealed class CreateSummaryPipe : IChunkingPipe
     {
         var report = new ChunkingReport
         {
-            FileName = Path.GetFileName(context.SourceFilePath),
+            SourceFile = context.SourceFile,
             Partitioner = context.Partitioner,
             Chunks = context.Chunks,
         };

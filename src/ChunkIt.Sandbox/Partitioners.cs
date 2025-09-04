@@ -15,34 +15,34 @@ internal static class Partitioners
     private const int AverageChunkSize = 16 * Kilobyte;
     private const int MaximumChunkSize = 32 * Kilobyte;
 
-    public static IEnumerable<IPartitioner> Enumerate()
-    {
-        yield return new GearPartitioner(
+    public static IReadOnlyList<IPartitioner> Values =
+    [
+        new GearPartitioner(
             gearTable: new StaticGearTable(),
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3
-        );
+        ),
 
-        yield return new TwinGearPartitioner(
+        new TwinGearPartitioner(
             gearTable: new StaticGearTable(rotations: 0),
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3
-        );
+        ),
 
-        yield return new TwinGearPartitioner(
+        new TwinGearPartitioner(
             leftGearTable: new StaticGearTable(rotations: 0),
             rightGearTable: new StaticGearTable(rotations: 17),
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3
-        );
+        ),
 
-        yield return new SequentialPartitioner(
+        new SequentialPartitioner(
             mode: SequentialPartitionerMode.Increasing,
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
@@ -50,19 +50,19 @@ internal static class Partitioners
             sequenceLength: 5,
             skipTrigger: 50,
             skipLength: 256
-        );
+        ),
 
-        yield return new SequentialPartitioner(
+        new SequentialPartitioner(
             mode: SequentialPartitionerMode.Decreasing,
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 6,
+            sequenceLength: 5,
             skipTrigger: 50,
             skipLength: 256
-        );
+        ),
         //
-        // yield return new AdaptiveSequentialPartitioner(
+        // new AdaptiveSequentialPartitioner(
         //     mode: SequentialPartitionerMode.Increasing,
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
@@ -70,23 +70,23 @@ internal static class Partitioners
         //     sequenceLength: 5,
         //     skipTrigger: 50,
         //     skipLength: 256
-        // );
+        // ),
 
-        // yield return new SlidingGearPartitioner(
+        // new SlidingGearPartitioner(
         //     gearTable: new StaticGearTable(),
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
         //     maximumChunkSize: MaximumChunkSize,
         //     normalizationLevel: 3
-        // );
+        // ),
         //
-        // yield return new RamPartitioner(
+        // new RamPartitioner(
         //     minimumChunkSize: MinimumChunkSize,
         //     maximumChunkSize: MaximumChunkSize,
         //     windowSize: AverageChunkSize
-        // );
+        // ),
         //
-        // yield return new SequentialPartitioner(
+        // new SequentialPartitioner(
         //     mode: SequentialPartitionerMode.Increasing,
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
@@ -94,9 +94,9 @@ internal static class Partitioners
         //     sequenceLength: 5,
         //     skipLength: 50,
         //     skipTrigger: 256
-        // );
+        // ),
         //
-        // yield return new SequentialPartitioner(
+        // new SequentialPartitioner(
         //     mode: SequentialPartitionerMode.Decreasing,
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
@@ -104,9 +104,9 @@ internal static class Partitioners
         //     sequenceLength: 5,
         //     skipLength: 50,
         //     skipTrigger: 256
-        // );
+        // ),
         //
-        // yield return new AdaptiveSequentialPartitioner(
+        // new AdaptiveSequentialPartitioner(
         //     mode: SequentialPartitionerMode.Increasing,
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
@@ -114,9 +114,9 @@ internal static class Partitioners
         //     sequenceLength: 5,
         //     skipLength: 50,
         //     skipTrigger: 256
-        // );
+        // ),
         //
-        // yield return new AdaptiveSequentialPartitioner(
+        // new AdaptiveSequentialPartitioner(
         //     mode: SequentialPartitionerMode.Decreasing,
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
@@ -124,21 +124,21 @@ internal static class Partitioners
         //     sequenceLength: 5,
         //     skipLength: 50,
         //     skipTrigger: 256
-        // );
+        // ),
         //
-        // yield return new MeanShiftPartitioner(
+        // new MeanShiftPartitioner(
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
         //     maximumChunkSize: MaximumChunkSize
-        // );
+        // ),
         //
-        // yield return new EntropyPartitioner(
+        // new EntropyPartitioner(
         //     minimumChunkSize: MinimumChunkSize,
         //     averageChunkSize: AverageChunkSize,
         //     maximumChunkSize: MaximumChunkSize,
         //     windowSize: 64,
         //     lowThresholdBits: 1.25,
         //     highThresholdBits: 1.85
-        // );
-    }
+        // ),
+    ];
 }

@@ -24,7 +24,7 @@ internal sealed class WriteChunksPipe : IChunkingPipe
 
         var chunksFilePath = SandboxRuntime.Instance.GetChunksFilePath(
             context.Partitioner.ToString(),
-            context.SourceFilePath
+            context.SourceFile.Path
         );
 
         await File.WriteAllTextAsync(chunksFilePath, chunksTableText);
