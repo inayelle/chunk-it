@@ -11,19 +11,19 @@ internal static class Partitioners
 {
     private const int Kilobyte = 1024;
 
-    private const int MinimumChunkSize = 1 * Kilobyte;
-    private const int AverageChunkSize = 4 * Kilobyte;
-    private const int MaximumChunkSize = 8 * Kilobyte;
+    private const int MinimumChunkSize = 4 * Kilobyte;
+    private const int AverageChunkSize = 16 * Kilobyte;
+    private const int MaximumChunkSize = 32 * Kilobyte;
 
     public static IEnumerable<IPartitioner> Enumerate()
     {
-        // yield return new GearPartitioner(
-        //     gearTable: new StaticGearTable(),
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize,
-        //     normalizationLevel: 3
-        // );
+        yield return new GearPartitioner(
+            gearTable: new StaticGearTable(),
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 3
+        );
 
         yield return new TwinGearPartitioner(
             gearTable: new StaticGearTable(rotations: 0),
@@ -42,15 +42,25 @@ internal static class Partitioners
             normalizationLevel: 3
         );
 
-        // yield return new SequentialPartitioner(
-        //     mode: SequentialPartitionerMode.Increasing,
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize,
-        //     sequenceLength: 5,
-        //     skipTrigger: 50,
-        //     skipLength: 256
-        // );
+        yield return new SequentialPartitioner(
+            mode: SequentialPartitionerMode.Increasing,
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            sequenceLength: 5,
+            skipTrigger: 50,
+            skipLength: 256
+        );
+
+        yield return new SequentialPartitioner(
+            mode: SequentialPartitionerMode.Decreasing,
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            sequenceLength: 6,
+            skipTrigger: 50,
+            skipLength: 256
+        );
         //
         // yield return new AdaptiveSequentialPartitioner(
         //     mode: SequentialPartitionerMode.Increasing,

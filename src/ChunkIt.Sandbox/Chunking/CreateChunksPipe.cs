@@ -6,7 +6,7 @@ namespace ChunkIt.Sandbox.Chunking;
 
 internal sealed class CreateChunksPipe : IChunkingPipe
 {
-    private const int BufferSize = 16 * 1024;
+    private const int BufferSize = 100 * 1024;
 
     public async Task<ChunkingReport> Invoke(
         ChunkingContext context,

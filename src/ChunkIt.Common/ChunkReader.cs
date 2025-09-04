@@ -6,16 +6,16 @@ namespace ChunkIt.Common;
 
 public sealed class ChunkReader
 {
-    public IPartitioner Partitioner { get; }
-    public IHasher Hasher { get; }
+    private readonly IPartitioner _partitioner;
+    private readonly IHasher _hasher;
 
-    public int BufferSize { get; }
+    private readonly int _bufferSize;
 
     public ChunkReader(IPartitioner partitioner, IHasher hasher, int bufferSize)
     {
-        Partitioner = partitioner;
-        Hasher = hasher;
-        BufferSize = bufferSize;
+        _partitioner = partitioner;
+        _hasher = hasher;
+        _bufferSize = bufferSize;
     }
 
     public async IAsyncEnumerable<Chunk> ReadAsync(
@@ -23,7 +23,7 @@ public sealed class ChunkReader
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        using var bufferLease = new ArrayPoolLease<byte>(BufferSize);
+        using var bufferLease = new ArrayPoolLease<byte>(_bufferSize);
 
         var buffer = bufferLease.Memory;
         var remainderBuffer = Memory<byte>.Empty;
@@ -40,7 +40,7 @@ public sealed class ChunkReader
                 yield break;
             }
 
-            var chunkLength = Partitioner.FindChunkLength(inputBuffer.Span);
+            var chunkLength = _partitioner.FindChunkLength(inputBuffer.Span);
             (var chunkBuffer, remainderBuffer) = inputBuffer.Split(chunkLength);
 
             yield return new Chunk
@@ -48,19 +48,11 @@ public sealed class ChunkReader
                 Id = chunkId,
                 Offset = chunkOffset,
                 Length = chunkLength,
-                Hash = Hasher.Hash(chunkBuffer.Span),
+                Hash = _hasher.Hash(chunkBuffer.Span),
             };
 
             chunkOffset += chunkLength;
             chunkId++;
         }
-    }
-
-    public override string ToString()
-    {
-        var partitionerName = Partitioner.GetType().Name;
-        var hasherName = Hasher.GetType().Name;
-
-        return $"{partitionerName} {hasherName} {BufferSize}";
     }
 }
