@@ -1,9 +1,6 @@
 using ChunkIt.Common.Abstractions;
-using ChunkIt.Partitioners.Entropy;
 using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.MeanShift;
-using ChunkIt.Partitioners.Ram;
-using ChunkIt.Partitioners.Sequential;
+using ChunkIt.Partitioners.Rabin;
 
 namespace ChunkIt.Sandbox;
 
@@ -15,8 +12,15 @@ internal static class Partitioners
     private const int AverageChunkSize = 16 * Kilobyte;
     private const int MaximumChunkSize = 32 * Kilobyte;
 
-    public static IReadOnlyList<IPartitioner> Values =
+    public static readonly IReadOnlyList<IPartitioner> Values =
     [
+        new RabinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            windowSize: 64
+        ),
+
         new GearPartitioner(
             gearTable: new StaticGearTable(),
             minimumChunkSize: MinimumChunkSize,
@@ -42,25 +46,25 @@ internal static class Partitioners
             normalizationLevel: 3
         ),
 
-        new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Increasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        ),
-
-        new SequentialPartitioner(
-            mode: SequentialPartitionerMode.Decreasing,
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            sequenceLength: 5,
-            skipTrigger: 50,
-            skipLength: 256
-        ),
+        // new SequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // ),
+        //
+        // new SequentialPartitioner(
+        //     mode: SequentialPartitionerMode.Decreasing,
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     sequenceLength: 5,
+        //     skipTrigger: 50,
+        //     skipLength: 256
+        // ),
         //
         // new AdaptiveSequentialPartitioner(
         //     mode: SequentialPartitionerMode.Increasing,
