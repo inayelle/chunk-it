@@ -5,36 +5,71 @@ namespace ChunkIt.Partitioners.Rabin;
 
 public class RabinPartitioner : IPartitioner
 {
-    private const ulong Base = 257UL;
+    private const ulong Prime = 153_191UL;
+    private const ulong Mask = 0x00FF_FFFF_FFFFUL;
+    private const ulong Polynomial = 0xBFE6_B8A5_BF37_8D83UL;
 
-    private readonly int _windowSize;
-    private readonly ulong _mask;
-    private readonly ulong _baseValue;
+    private const int WindowSize = 16;
+    private const int WindowMask = WindowSize - 1;
+    private const int WindowSlideOffset = 64;
+
+    private static readonly ulong[] OutMap = new ulong[256];
+    private static readonly ulong[] Ir = new ulong[256];
 
     public int MinimumChunkSize { get; }
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public RabinPartitioner(
-        int minimumChunkSize,
-        int averageChunkSize,
-        int maximumChunkSize,
-        int windowSize
-    )
+    private readonly int _winSlidePos;
+    private readonly ulong _cutMask;
+
+    static RabinPartitioner()
+    {
+        var polyPow = 1UL;
+        for (var i = 0; i < WindowSize; i++)
+        {
+            polyPow = (polyPow * Prime) & Mask;
+        }
+
+        for (var i = 0UL; i < 256; i++)
+        {
+            OutMap[i] = (i * polyPow) & Mask;
+        }
+
+        for (var i = 0; i < 256; i++)
+        {
+            var term = 1UL;
+            var pow = 1UL;
+            var val = 1UL;
+
+            for (var j = 0; j < WindowSize; j++)
+            {
+                if ((term & Polynomial) != 0UL)
+                {
+                    val = (val + ((pow * (ulong)i) & Mask)) & Mask;
+                }
+
+                pow = (pow * Prime) & Mask;
+                term <<= 1;
+            }
+
+            Ir[i] = val & Mask;
+        }
+    }
+
+    public RabinPartitioner(int minimumChunkSize, int averageChunkSize, int maximumChunkSize)
     {
         MinimumChunkSize = minimumChunkSize;
         AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
 
-        _windowSize = windowSize;
-
-        _mask = CalculateMask(averageChunkSize);
-        _baseValue = CalculateBaseValue(windowSize);
+        _winSlidePos = MinimumChunkSize - WindowSlideOffset;
+        _cutMask = (ulong)(averageChunkSize - minimumChunkSize - 1);
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
     {
-        if (buffer.Length <= MinimumChunkSize || buffer.Length <= _windowSize)
+        if (buffer.Length <= MinimumChunkSize)
         {
             return buffer.Length;
         }
@@ -44,46 +79,43 @@ public class RabinPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
+        var cursor = Math.Min(_winSlidePos, buffer.Length);
+
+        var window = (Span<byte>)stackalloc byte[WindowSize];
+        var windowIndex = 0;
+
         var hash = 0UL;
-        var cursor = 0;
 
-        for (; cursor < _windowSize; cursor += 1)
+        while (cursor < buffer.Length)
         {
-            hash = unchecked(hash * Base + buffer[cursor]);
-        }
+            var currentByte = buffer[cursor];
+            var outByte = window[windowIndex];
+            var pushedOut = OutMap[outByte];
 
-        for (; cursor < buffer.Length; cursor += 1)
-        {
-            if ((hash & _mask) == 0 && cursor >= MinimumChunkSize)
+            unchecked
             {
-                return cursor;
+                hash = (hash * Prime) & Mask;
+                hash = (hash + currentByte) & Mask;
+                hash = (hash - pushedOut) & Mask;
             }
 
-            hash = unchecked((hash - _baseValue * buffer[cursor - _windowSize]) * Base + buffer[cursor]);
+            window[windowIndex] = currentByte;
+            windowIndex = (windowIndex + 1) & WindowMask;
+
+            if (cursor >= MinimumChunkSize)
+            {
+                var checksum = hash ^ Ir[outByte];
+
+                if ((checksum & _cutMask) == 0UL)
+                {
+                    return cursor;
+                }
+            }
+
+            cursor += 1;
         }
 
         return buffer.Length;
-    }
-
-    private static ulong CalculateMask(int averageChunkSize)
-    {
-        var k = (int)Math.Ceiling(Math.Log2(averageChunkSize));
-
-        var kMask = Math.Min(63, k);
-
-        return (1UL << kMask) - 1;
-    }
-
-    private static ulong CalculateBaseValue(int windowSize)
-    {
-        var baseValue = 1UL;
-
-        for (var i = 0; i < windowSize - 1; i++)
-        {
-            baseValue = unchecked(baseValue * Base);
-        }
-
-        return baseValue;
     }
 
     public override string ToString()
@@ -94,7 +126,8 @@ public class RabinPartitioner : IPartitioner
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
+            .AddParameter("window", WindowSize)
+            .AddParameter("cut_mask", _cutMask)
             .Build();
     }
 }

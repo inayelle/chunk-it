@@ -17,8 +17,7 @@ internal static class Partitioners
         new RabinPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            windowSize: 64
+            maximumChunkSize: MaximumChunkSize
         ),
 
         new GearPartitioner(
