@@ -1,24 +1,27 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Ram;
+namespace ChunkIt.Partitioners.RapidAsymmetricMaximum;
 
-public class RamPartitioner : IPartitioner
+public class RapidAsymmetricMaximumPartitioner : IPartitioner
 {
     private readonly int _windowSize;
 
     public int MinimumChunkSize { get; }
+    public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public RamPartitioner(
+    public RapidAsymmetricMaximumPartitioner(
         int minimumChunkSize,
-        int maximumChunkSize,
-        int windowSize
+        int averageChunkSize,
+        int maximumChunkSize
     )
     {
         MinimumChunkSize = minimumChunkSize;
+        AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
-        _windowSize = windowSize;
+
+        _windowSize = averageChunkSize - 256;
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
@@ -58,10 +61,11 @@ public class RamPartitioner : IPartitioner
 
     public override string ToString()
     {
-        var builder = new DescriptionBuilder("ram");
+        var builder = new DescriptionBuilder("rapid-asymmetric-maximum");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
+            .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
             .AddParameter("window", _windowSize)
             .Build();

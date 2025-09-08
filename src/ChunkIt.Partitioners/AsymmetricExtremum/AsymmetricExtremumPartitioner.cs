@@ -1,32 +1,27 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Gear;
+namespace ChunkIt.Partitioners.AsymmetricExtremum;
 
-public class GearPartitioner : IPartitioner
+public class AsymmetricExtremumPartitioner : IPartitioner
 {
-    private readonly IGearTable _gearTable;
-
-    private readonly ulong _mask;
+    private readonly int _windowSize;
 
     public int MinimumChunkSize { get; }
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public GearPartitioner(
+    public AsymmetricExtremumPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
-        int maximumChunkSize,
-        IGearTable gearTable
+        int maximumChunkSize
     )
     {
         MinimumChunkSize = minimumChunkSize;
         AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
 
-        _gearTable = gearTable;
-
-        _mask = GenerateMask(averageChunkSize);
+        _windowSize = averageChunkSize - 256;
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
@@ -41,38 +36,37 @@ public class GearPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
-        var fingerprint = 0UL;
+        var max = (Value: buffer[0], Offset: 0);
+        var cursor = 1;
 
-        for (var cursor = 0; cursor < buffer.Length; cursor++)
+        while (cursor < buffer.Length)
         {
-            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
-
-            if ((fingerprint & _mask) == 0 && cursor >= MinimumChunkSize)
+            if (buffer[cursor] > max.Value)
+            {
+                max = (Value: buffer[cursor], Offset: cursor);
+            }
+            else if (cursor >= MinimumChunkSize && cursor == max.Offset + _windowSize)
             {
                 return cursor;
+            }
+            else
+            {
+                cursor += 1;
             }
         }
 
         return buffer.Length;
     }
 
-    private static ulong GenerateMask(int averageChunkSize)
-    {
-        var k = (int)Math.Ceiling(Math.Log2(averageChunkSize));
-
-        var mask = (1UL << k) - 1;
-
-        return mask;
-    }
-
     public override string ToString()
     {
-        var builder = new DescriptionBuilder("gear");
+        var builder = new DescriptionBuilder("asymmetric-extremum");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("window", _windowSize)
             .Build();
     }
 }

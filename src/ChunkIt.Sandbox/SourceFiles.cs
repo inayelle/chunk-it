@@ -4,10 +4,13 @@ internal static class SourceFiles
 {
     private const string InputsRoot = "/storage/ina/workspace/personal/ChunkIt/inputs";
 
-    public static readonly IReadOnlyList<SourceFile> Values =
-    [
-        Path.Combine(InputsRoot, "linux-6.12.44.tar"),
-        Path.Combine(InputsRoot, "linux-6.16.4.tar"),
-        "/storage/ina/common/iso/office.iso",
-    ];
+    public static readonly IReadOnlyList<SourceFile> Values = Enumerate().ToArray();
+
+    private static IEnumerable<SourceFile> Enumerate()
+    {
+        // yield return Path.Combine(InputsRoot, "linux-6.16.4.tar");
+
+        yield return "/home/ina/downloads/gcc/gcc.tar";
+        // yield return "/storage/ina/common/iso/office.iso";
+    }
 }

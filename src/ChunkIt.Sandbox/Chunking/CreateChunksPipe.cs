@@ -27,7 +27,7 @@ internal sealed class CreateChunksPipe : IChunkingPipe
             BufferSize
         );
 
-        await foreach (var chunk in chunkReader.ReadAsync(sourceFileStream))
+        await foreach (var chunk in chunkReader.ReadChunksAsync(sourceFileStream))
         {
             context.AddChunk(chunk);
         }

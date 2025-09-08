@@ -5,12 +5,10 @@ using BenchmarkDotNet.Reports;
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Hashers;
-using ChunkIt.Partitioners.Entropy;
+using ChunkIt.Partitioners.AsymmetricExtremum;
 using ChunkIt.Partitioners.Fixed;
 using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.MeanShift;
-using ChunkIt.Partitioners.Ram;
-using ChunkIt.Partitioners.Sequential;
+using ChunkIt.Partitioners.RapidAsymmetricMaximum;
 
 namespace ChunkIt.Benchmarks;
 
@@ -31,15 +29,13 @@ public class ChunkingBenchmark
     [Benchmark]
     public async Task<ulong> Run()
     {
-        _sourceFileStream.Seek(0, SeekOrigin.Begin);
-
         var reader = new ChunkReader(Partitioner, NoneHasher.Instance, 32 * Kilobyte);
 
         ulong length = 0;
 
-        await foreach (var chunk in reader.ReadAsync(_sourceFileStream).ConfigureAwait(false))
+        await foreach (var chunkLength in reader.ReadChunkLengthsAsync(_sourceFileStream).ConfigureAwait(false))
         {
-            length += (ulong)chunk.Length;
+            length += (ulong)chunkLength;
         }
 
         return length;
@@ -56,6 +52,12 @@ public class ChunkingBenchmark
         );
     }
 
+    [IterationSetup]
+    public void IterationSetup()
+    {
+        _sourceFileStream.Seek(0, SeekOrigin.Begin);
+    }
+
     [GlobalCleanup]
     public void GlobalCleanup()
     {
@@ -64,13 +66,16 @@ public class ChunkingBenchmark
 
     public static IEnumerable<SourceFilePath> GenerateSourceFilePaths()
     {
-        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-6.16.4.tar";
-        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-combined.tar";
+        // yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-6.16.4.tar";
+        // yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-combined.tar";
+
+        yield return "/home/ina/downloads/gcc/gcc.tar";
     }
 
     public static IEnumerable<IPartitioner> GeneratePartitioners()
     {
-        int[] minimumChunkSizes = [1 * Kilobyte, 2 * Kilobyte, 4 * Kilobyte];
+        // int[] minimumChunkSizes = [1 * Kilobyte, 2 * Kilobyte, 4 * Kilobyte];
+        int[] minimumChunkSizes = [4 * Kilobyte];
 
         foreach (var minimumChunkSize in minimumChunkSizes)
         {
@@ -82,88 +87,39 @@ public class ChunkingBenchmark
             );
 
             yield return new GearPartitioner(
-                gearTable: new StaticGearTable(),
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
-                normalizationLevel: 3
+                gearTable: new StaticGearTable()
             );
 
-            yield return new TwinGearPartitioner(
-                gearTable: new StaticGearTable(),
+            yield return new FastPartitioner(
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
-                normalizationLevel: 3
+                normalizationLevel: 3,
+                gearTable: new StaticGearTable()
             );
 
-            yield return new SlidingGearPartitioner(
-                gearTable: new StaticGearTable(),
+            yield return new TwinPartitioner(
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
-                normalizationLevel: 3
+                normalizationLevel: 3,
+                leftGearTable: new StaticGearTable(rotations: 0),
+                rightGearTable: new StaticGearTable(rotations: 17)
             );
 
-            yield return new RamPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                windowSize: averageChunkSize
-            );
-
-            yield return new SequentialPartitioner(
-                mode: SequentialPartitionerMode.Increasing,
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                sequenceLength: 5,
-                skipLength: 50,
-                skipTrigger: 256
-            );
-
-            yield return new SequentialPartitioner(
-                mode: SequentialPartitionerMode.Decreasing,
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                sequenceLength: 5,
-                skipLength: 50,
-                skipTrigger: 256
-            );
-
-            yield return new AdaptiveSequentialPartitioner(
-                mode: SequentialPartitionerMode.Increasing,
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                sequenceLength: 5,
-                skipLength: 50,
-                skipTrigger: 256
-            );
-
-            yield return new AdaptiveSequentialPartitioner(
-                mode: SequentialPartitionerMode.Decreasing,
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                sequenceLength: 5,
-                skipLength: 50,
-                skipTrigger: 256
-            );
-
-            yield return new MeanShiftPartitioner(
+            yield return new RapidAsymmetricMaximumPartitioner(
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize
             );
 
-            yield return new EntropyPartitioner(
+            yield return new AsymmetricExtremumPartitioner(
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                windowSize: 64,
-                lowThresholdBits: 1.25,
-                highThresholdBits: 1.85
+                maximumChunkSize: maximumChunkSize
             );
         }
     }

@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioners.Gear;
 
-public class TwinGearPartitioner : IPartitioner
+public class TwinPartitioner : IPartitioner
 {
     private readonly IGearTable _leftGearTable;
     private readonly IGearTable _rightGearTable;
@@ -15,30 +15,30 @@ public class TwinGearPartitioner : IPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public TwinGearPartitioner(
-        IGearTable gearTable,
+    public TwinPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
-        int normalizationLevel
+        int normalizationLevel,
+        IGearTable gearTable
     ) : this(
-        gearTable,
-        gearTable,
         minimumChunkSize,
         averageChunkSize,
         maximumChunkSize,
-        normalizationLevel
+        normalizationLevel,
+        gearTable,
+        gearTable
     )
     {
     }
 
-    public TwinGearPartitioner(
-        IGearTable leftGearTable,
-        IGearTable rightGearTable,
+    public TwinPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
-        int normalizationLevel
+        int normalizationLevel,
+        IGearTable leftGearTable,
+        IGearTable rightGearTable
     )
     {
         MinimumChunkSize = minimumChunkSize;
@@ -122,9 +122,9 @@ public class TwinGearPartitioner : IPartitioner
 
     public override string ToString()
     {
-        var gearMode = _leftGearTable == _rightGearTable ? "same" : "diff";
+        var gearMode = _leftGearTable == _rightGearTable ? "single" : "double";
 
-        var builder = new DescriptionBuilder($"twin-gear-{gearMode}");
+        var builder = new DescriptionBuilder($"twin-{gearMode}");
 
         return builder
             .AddParameter("min", MinimumChunkSize)

@@ -3,20 +3,23 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioners.Gear;
 
-public class GearPartitioner : IPartitioner
+public class FastPartitioner : IPartitioner
 {
     private readonly IGearTable _gearTable;
 
-    private readonly ulong _mask;
+    private readonly int _normalizationLevel;
+    private readonly ulong _strictMask;
+    private readonly ulong _laxMask;
 
     public int MinimumChunkSize { get; }
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public GearPartitioner(
+    public FastPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
+        int normalizationLevel,
         IGearTable gearTable
     )
     {
@@ -24,9 +27,10 @@ public class GearPartitioner : IPartitioner
         AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
 
+        _normalizationLevel = normalizationLevel;
         _gearTable = gearTable;
 
-        _mask = GenerateMask(averageChunkSize);
+        (_strictMask, _laxMask) = GenerateMasks(averageChunkSize, normalizationLevel);
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
@@ -42,37 +46,56 @@ public class GearPartitioner : IPartitioner
         }
 
         var fingerprint = 0UL;
+        var cursor = MinimumChunkSize;
 
-        for (var cursor = 0; cursor < buffer.Length; cursor++)
+        var upper = Math.Min(buffer.Length, MaximumChunkSize);
+        var mid = Math.Min(upper, AverageChunkSize);
+
+        for (; cursor < mid; cursor++)
         {
             _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
 
-            if ((fingerprint & _mask) == 0 && cursor >= MinimumChunkSize)
+            if ((fingerprint & _strictMask) == 0)
             {
                 return cursor;
             }
         }
 
-        return buffer.Length;
+        for (; cursor < upper; cursor++)
+        {
+            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
+
+            if ((fingerprint & _laxMask) == 0)
+            {
+                return cursor;
+            }
+        }
+
+        return cursor;
     }
 
-    private static ulong GenerateMask(int averageChunkSize)
+    private static (ulong StrictMask, ulong LaxMask) GenerateMasks(int averageChunkSize, int normalizationLevel)
     {
         var k = (int)Math.Ceiling(Math.Log2(averageChunkSize));
 
-        var mask = (1UL << k) - 1;
+        var kStrict = Math.Min(63, k + normalizationLevel);
+        var kLax = Math.Max(1, k - normalizationLevel);
 
-        return mask;
+        var strictMask = (1UL << kStrict) - 1;
+        var laxMask = (1UL << kLax) - 1;
+
+        return (strictMask, laxMask);
     }
 
     public override string ToString()
     {
-        var builder = new DescriptionBuilder("gear");
+        var builder = new DescriptionBuilder("fast");
 
         return builder
             .AddParameter("min", MinimumChunkSize)
             .AddParameter("avg", AverageChunkSize)
             .AddParameter("max", MaximumChunkSize)
+            .AddParameter("norm_level", _normalizationLevel)
             .Build();
     }
 }

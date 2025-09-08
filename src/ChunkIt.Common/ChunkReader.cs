@@ -18,7 +18,7 @@ public sealed class ChunkReader
         _bufferSize = bufferSize;
     }
 
-    public async IAsyncEnumerable<Chunk> ReadAsync(
+    public async IAsyncEnumerable<Chunk> ReadChunksAsync(
         Stream stream,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
@@ -53,6 +53,32 @@ public sealed class ChunkReader
 
             chunkOffset += chunkLength;
             chunkId++;
+        }
+    }
+
+    public async IAsyncEnumerable<int> ReadChunkLengthsAsync(
+        Stream stream,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        using var bufferLease = new ArrayPoolLease<byte>(_bufferSize);
+
+        var buffer = bufferLease.Memory;
+        var remainderBuffer = Memory<byte>.Empty;
+
+        while (true)
+        {
+            var inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
+
+            if (inputBuffer.IsEmpty)
+            {
+                yield break;
+            }
+
+            var chunkLength = _partitioner.FindChunkLength(inputBuffer.Span);
+            remainderBuffer = inputBuffer.Slice(start: chunkLength);
+
+            yield return chunkLength;
         }
     }
 }
