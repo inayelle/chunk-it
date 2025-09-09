@@ -8,6 +8,8 @@ internal sealed class ChunkingReport
     public required IPartitioner Partitioner { get; init; }
     public required IReadOnlyCollection<Chunk> Chunks { get; init; }
 
+    public TimeSpan Elapsed { get; set; }
+
     public bool IsValid { get; set; }
 
     public int TotalChunks { get; set; }

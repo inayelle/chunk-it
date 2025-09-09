@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AnyKit.Pipelines;
 using ChunkIt.Common;
 using ChunkIt.Hashers;
@@ -29,13 +30,18 @@ internal sealed class CreateChunksPipe : IChunkingPipe
             bufferSize: BufferSize
         );
 
+        var stopwatch = Stopwatch.GetTimestamp();
+
         await foreach (var chunk in chunkReader.ReadChunksAsync(sourceFileStream))
         {
             context.AddChunk(chunk);
         }
 
+        var elapsed = Stopwatch.GetElapsedTime(stopwatch);
+
         var report = await next(context);
 
+        report.Elapsed = elapsed;
         report.TotalChunks = context.Chunks.Count;
         report.AverageChunkSize = (int)Math.Ceiling(context.Chunks.Average(chunk => chunk.Length));
 

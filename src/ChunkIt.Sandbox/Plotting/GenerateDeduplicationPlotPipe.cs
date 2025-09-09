@@ -50,7 +50,7 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
         }
 
         var plotPath = SandboxRuntime.Instance.GetPlotFilePath("saved_ratio");
-        multiplot.Save(plotPath, extraHeight: 300);
+        multiplot.Save(plotPath, extraHeight: 400);
 
         return next(context);
     }

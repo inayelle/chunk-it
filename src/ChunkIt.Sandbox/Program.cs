@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using ChunkIt.Sandbox.Chunking;
+﻿using ChunkIt.Sandbox.Chunking;
 using ChunkIt.Sandbox.Plotting;
 
 namespace ChunkIt.Sandbox;
@@ -21,20 +20,24 @@ internal static class Program
         var plottingPipeline = new PlottingPipeline();
         var chunkingReports = new List<ChunkingReport>();
 
-        foreach (var sourceFilePath in SourceFiles.Values)
+        foreach (var sourceFile in SourceFiles.Values)
         {
+            Console.WriteLine($"{sourceFile.Name}:");
+
             foreach (var partitioner in Partitioners.Values)
             {
-                var chunkingContext = new ChunkingContext(partitioner, sourceFilePath);
+                Console.Write($"    - {partitioner}: ");
 
-                var stopwatch = Stopwatch.GetTimestamp();
+                var chunkingContext = new ChunkingContext(partitioner, sourceFile, ReportProgress);
+
                 var chunkingReport = await chunkingPipeline.Invoke(chunkingContext);
-                var elapsed = Stopwatch.GetElapsedTime(stopwatch);
 
                 chunkingReports.Add(chunkingReport);
 
-                Console.WriteLine($"Done: {partitioner} {sourceFilePath} in {elapsed.TotalMilliseconds:F2} ms.");
+                Console.WriteLine($" elapsed: {chunkingReport.Elapsed.TotalMilliseconds} ms.");
             }
+
+            Console.WriteLine();
         }
 
         var plottingContext = new PlottingContext(
@@ -42,5 +45,20 @@ internal static class Program
         );
 
         await plottingPipeline.Invoke(plottingContext);
+    }
+
+    private static void ReportProgress(int progress)
+    {
+        var report = progress switch
+        {
+            0 => "0%",
+            25 => "25%",
+            50 => "50%",
+            75 => "75%",
+            100 => "100%",
+            _ => "_",
+        };
+
+        Console.Write(report);
     }
 }
