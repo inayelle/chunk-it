@@ -49,7 +49,7 @@ public class TwinPartitioner : IPartitioner
         _rightGearTable = rightGearTable;
 
         _normalizationLevel = normalizationLevel;
-        _mask = GenerateMasks(averageChunkSize, normalizationLevel);
+        _mask = GenerateMask(averageChunkSize, normalizationLevel);
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
@@ -109,7 +109,7 @@ public class TwinPartitioner : IPartitioner
         }
     }
 
-    private static ulong GenerateMasks(int averageChunkSize, int normalizationLevel)
+    private static ulong GenerateMask(int averageChunkSize, int normalizationLevel)
     {
         var kBase = (int)Math.Ceiling(Math.Log2(averageChunkSize));
 
