@@ -8,9 +8,8 @@ internal static class SourceFiles
 
     private static IEnumerable<SourceFile> Enumerate()
     {
-        // yield return Path.Combine(InputsRoot, "linux-6.16.4.tar");
-
-        yield return "/home/ina/downloads/gcc/gcc.tar";
-        // yield return "/storage/ina/common/iso/office.iso";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/dotnet/dotnet.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux/linux.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/gcc/gcc.tar";
     }
 }

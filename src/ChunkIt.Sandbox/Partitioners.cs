@@ -2,6 +2,7 @@ using ChunkIt.Common.Abstractions;
 using ChunkIt.Partitioners.AsymmetricExtremum;
 using ChunkIt.Partitioners.Gear;
 using ChunkIt.Partitioners.RapidAsymmetricMaximum;
+using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Sandbox;
 
@@ -51,6 +52,16 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize
+        );
+
+        yield return new SequentialPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            mode: SequentialPartitionerMode.Increasing,
+            sequenceLength: 5,
+            skipLength: 256,
+            skipTrigger: 50
         );
     }
 }
