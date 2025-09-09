@@ -5,8 +5,8 @@ namespace ChunkIt.Partitioners.Gear;
 
 public class TwinPartitioner : IPartitioner
 {
-    private readonly IGearTable _leftGearTable;
-    private readonly IGearTable _rightGearTable;
+    private readonly GearTable _leftGearTable;
+    private readonly GearTable _rightGearTable;
 
     private readonly int _normalizationLevel;
     private readonly ulong _mask;
@@ -20,7 +20,7 @@ public class TwinPartitioner : IPartitioner
         int averageChunkSize,
         int maximumChunkSize,
         int normalizationLevel,
-        IGearTable gearTable
+        GearTable gearTable
     ) : this(
         minimumChunkSize,
         averageChunkSize,
@@ -37,8 +37,8 @@ public class TwinPartitioner : IPartitioner
         int averageChunkSize,
         int maximumChunkSize,
         int normalizationLevel,
-        IGearTable leftGearTable,
-        IGearTable rightGearTable
+        GearTable leftGearTable,
+        GearTable rightGearTable
     )
     {
         MinimumChunkSize = minimumChunkSize;

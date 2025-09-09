@@ -6,7 +6,7 @@ namespace ChunkIt.Partitioners.Gear;
 
 public class SlidingGearPartitioner : IPartitioner
 {
-    private readonly IGearTable _gearTable;
+    private readonly GearTable _gearTable;
 
     private readonly int _normalizationLevel;
     private readonly ulong[] _masks;
@@ -17,7 +17,7 @@ public class SlidingGearPartitioner : IPartitioner
     public int MaximumChunkSize { get; }
 
     public SlidingGearPartitioner(
-        IGearTable gearTable,
+        GearTable gearTable,
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,

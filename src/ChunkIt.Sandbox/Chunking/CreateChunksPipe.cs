@@ -6,7 +6,8 @@ namespace ChunkIt.Sandbox.Chunking;
 
 internal sealed class CreateChunksPipe : IChunkingPipe
 {
-    private const int BufferSize = 100 * 1024;
+    private const int Kilobyte = 1024;
+    private const int BufferSize = Kilobyte * 1000 * 4;
 
     public async Task<ChunkingReport> Invoke(
         ChunkingContext context,
@@ -18,13 +19,14 @@ internal sealed class CreateChunksPipe : IChunkingPipe
             FileMode.Open,
             FileAccess.Read,
             FileShare.Read,
-            BufferSize
+            BufferSize,
+            options: FileOptions.Asynchronous | FileOptions.SequentialScan
         );
 
         var chunkReader = new ChunkReader(
             partitioner: context.Partitioner,
             hasher: Sha256Hasher.Instance,
-            BufferSize
+            bufferSize: BufferSize
         );
 
         await foreach (var chunk in chunkReader.ReadChunksAsync(sourceFileStream))

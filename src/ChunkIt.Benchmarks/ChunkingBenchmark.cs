@@ -17,6 +17,7 @@ namespace ChunkIt.Benchmarks;
 public class ChunkingBenchmark
 {
     private const int Kilobyte = 1024;
+    private const int BufferSize = Kilobyte * 1000 * 4;
 
     private FileStream _sourceFileStream;
 
@@ -29,7 +30,7 @@ public class ChunkingBenchmark
     [Benchmark]
     public async Task<ulong> Run()
     {
-        var reader = new ChunkReader(Partitioner, NoneHasher.Instance, 32 * Kilobyte);
+        var reader = new ChunkReader(Partitioner, NoneHasher.Instance, BufferSize);
 
         ulong length = 0;
 
@@ -48,7 +49,9 @@ public class ChunkingBenchmark
             SourceFilePath.Path,
             FileMode.Open,
             FileAccess.Read,
-            FileShare.None
+            FileShare.None,
+            bufferSize: BufferSize,
+            options: FileOptions.Asynchronous | FileOptions.SequentialScan
         );
     }
 
@@ -90,7 +93,7 @@ public class ChunkingBenchmark
                 minimumChunkSize: minimumChunkSize,
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
-                gearTable: new StaticGearTable()
+                gearTable: GearTable.Predefined(rotations: 0)
             );
 
             yield return new FastPartitioner(
@@ -98,7 +101,7 @@ public class ChunkingBenchmark
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
                 normalizationLevel: 3,
-                gearTable: new StaticGearTable()
+                gearTable: GearTable.Predefined(rotations: 0)
             );
 
             yield return new TwinPartitioner(
@@ -106,8 +109,8 @@ public class ChunkingBenchmark
                 averageChunkSize: averageChunkSize,
                 maximumChunkSize: maximumChunkSize,
                 normalizationLevel: 3,
-                leftGearTable: new StaticGearTable(rotations: 0),
-                rightGearTable: new StaticGearTable(rotations: 17)
+                leftGearTable: GearTable.Predefined(rotations: 0),
+                rightGearTable: GearTable.Predefined(rotations: 17)
             );
 
             yield return new RapidAsymmetricMaximumPartitioner(
@@ -130,8 +133,6 @@ public sealed class ChunkingBenchmarkConfig : ManualConfig
     public ChunkingBenchmarkConfig()
     {
         SummaryStyle = SummaryStyle.Default.WithMaxParameterColumnWidth(64);
-
-        AddDiagnoser(new EventPipeProfiler(EventPipeProfile.CpuSampling));
 
         WithOptions(ConfigOptions.DisableLogFile);
     }

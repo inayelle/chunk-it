@@ -26,6 +26,7 @@ public sealed class ChunkReader
         using var bufferLease = new ArrayPoolLease<byte>(_bufferSize);
 
         var buffer = bufferLease.Memory;
+        var inputBuffer = Memory<byte>.Empty;
         var remainderBuffer = Memory<byte>.Empty;
 
         var chunkOffset = 0L;
@@ -33,7 +34,14 @@ public sealed class ChunkReader
 
         while (true)
         {
-            var inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
+            if (remainderBuffer.Length >= _partitioner.MaximumChunkSize)
+            {
+                inputBuffer = remainderBuffer;
+            }
+            else
+            {
+                inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
+            }
 
             if (inputBuffer.IsEmpty)
             {

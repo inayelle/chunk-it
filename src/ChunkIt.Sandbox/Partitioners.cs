@@ -22,7 +22,7 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            gearTable: new StaticGearTable(rotations: 0)
+            gearTable: GearTable.Predefined(rotations: 0)
         );
 
         yield return new FastPartitioner(
@@ -30,7 +30,7 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            gearTable: new StaticGearTable(rotations: 0)
+            gearTable: GearTable.Predefined(rotations: 0)
         );
 
         yield return new TwinPartitioner(
@@ -38,8 +38,8 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            leftGearTable: new StaticGearTable(rotations: 0),
-            rightGearTable: new StaticGearTable(rotations: 17)
+            leftGearTable: GearTable.Predefined(rotations: 0),
+            rightGearTable: GearTable.Predefined(rotations: 17)
         );
 
         yield return new RapidAsymmetricMaximumPartitioner(

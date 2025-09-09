@@ -5,7 +5,7 @@ namespace ChunkIt.Partitioners.Gear;
 
 public class FastPartitioner : IPartitioner
 {
-    private readonly IGearTable _gearTable;
+    private readonly GearTable _gearTable;
 
     private readonly int _normalizationLevel;
     private readonly ulong _strictMask;
@@ -20,7 +20,7 @@ public class FastPartitioner : IPartitioner
         int averageChunkSize,
         int maximumChunkSize,
         int normalizationLevel,
-        IGearTable gearTable
+        GearTable gearTable
     )
     {
         MinimumChunkSize = minimumChunkSize;

@@ -1,11 +1,72 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Partitioners.Gear;
 
-public class StaticGearTable : IGearTable
+public sealed class GearTable
 {
-    private readonly ulong[] _table =
+    private readonly ulong[] _table;
+
+    internal GearTable(ulong[] table)
+    {
+        _table = table;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Fingerprint(ref ulong fingerprint, in byte value)
+    {
+        unchecked
+        {
+            fingerprint = (fingerprint << 1) + _table[value];
+        }
+    }
+
+    public static GearTable Random(Random random)
+    {
+        var seed = random.NextUInt64();
+
+        return RandomGearTable.Create(seed);
+    }
+
+    public static GearTable Predefined(int rotations)
+    {
+        return PredefinedGearTable.Create(rotations);
+    }
+}
+
+file static class RandomGearTable
+{
+    public static GearTable Create(ulong seed)
+    {
+        var table = new ulong[256];
+
+        for (var i = 0; i < table.Length; i++)
+        {
+            table[i] = SplitMix64(ref seed);
+        }
+
+        return new GearTable(table);
+    }
+
+    private static ulong SplitMix64(ref ulong seed)
+    {
+        unchecked
+        {
+            seed += 0x9E3779B97F4A7C15UL;
+
+            var z = seed;
+            z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL;
+            z = (z ^ (z >> 27)) * 0x94D049BB133111EBUL;
+
+            return z ^ (z >> 31);
+        }
+    }
+}
+
+file static class PredefinedGearTable
+{
+    private static readonly ulong[] Table =
     [
         0x651748f5a15f8222, 0xd6eda276c877d8ea, 0x66896ef9591b326b,
         0xcd97506b21370a12, 0x8c9c5c9acbeb2a05, 0xb8b9553ee17665ef,
@@ -95,32 +156,20 @@ public class StaticGearTable : IGearTable
         0xd31b4b03145f02fa,
     ];
 
-    public StaticGearTable()
+    public static GearTable Create(int rotations)
     {
-    }
+        var table = new ulong[Table.Length];
 
-    public StaticGearTable(int rotations)
-    {
-        switch (rotations)
+        if (rotations is < 0 or > 32)
         {
-            case < 0 or > 32:
-                throw new ArgumentException("Rotations must be in range [0; 32].", nameof(rotations));
-            case 0:
-                return;
+            throw new ArgumentException("Rotations must be in range [0; 32].", nameof(rotations));
         }
 
-        for (var index = 0; index < _table.Length; index++)
+        for (var index = 0; index < table.Length; index++)
         {
-            _table[index] = BitOperations.RotateRight(_table[index], rotations);
+            table[index] = BitOperations.RotateRight(Table[index], rotations);
         }
-    }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Fingerprint(ref ulong fingerprint, byte value)
-    {
-        unchecked
-        {
-            fingerprint = (fingerprint << 1) + _table[value];
-        }
+        return new GearTable(table);
     }
 }
