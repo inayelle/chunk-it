@@ -41,11 +41,11 @@ public sealed class ChunkReader
             else
             {
                 inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
-            }
 
-            if (inputBuffer.IsEmpty)
-            {
-                yield break;
+                if (inputBuffer.IsEmpty)
+                {
+                    yield break;
+                }
             }
 
             var chunkLength = _partitioner.FindChunkLength(inputBuffer.Span);
@@ -72,15 +72,23 @@ public sealed class ChunkReader
         using var bufferLease = new ArrayPoolLease<byte>(_bufferSize);
 
         var buffer = bufferLease.Memory;
+        var inputBuffer = Memory<byte>.Empty;
         var remainderBuffer = Memory<byte>.Empty;
 
         while (true)
         {
-            var inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
-
-            if (inputBuffer.IsEmpty)
+            if (remainderBuffer.Length >= _partitioner.MaximumChunkSize)
             {
-                yield break;
+                inputBuffer = remainderBuffer;
+            }
+            else
+            {
+                inputBuffer = await stream.RefillAsync(buffer, remainderBuffer, cancellationToken);
+
+                if (inputBuffer.IsEmpty)
+                {
+                    yield break;
+                }
             }
 
             var chunkLength = _partitioner.FindChunkLength(inputBuffer.Span);
