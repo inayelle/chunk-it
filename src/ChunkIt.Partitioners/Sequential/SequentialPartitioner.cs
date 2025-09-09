@@ -91,7 +91,7 @@ public class SequentialPartitioner : IPartitioner
             cursor += 1;
         }
 
-        return Math.Min(cursor, buffer.Length);
+        return buffer.Length;
     }
 
     public override string ToString()
