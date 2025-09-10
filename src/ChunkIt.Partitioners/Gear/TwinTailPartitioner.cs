@@ -64,61 +64,69 @@ public class TwinTailPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
-        return FindChunkLength(buffer, _mask);
-    }
-
-    private int FindChunkLength(ReadOnlySpan<byte> buffer, ulong mask)
-    {
         var mid = Math.Min(buffer.Length, AverageChunkSize);
         var upper = buffer.Length;
 
-        while (mask > 0)
+        var (leftPrint, rightPrint) = (0UL, 0UL);
+
+        var leftCursor = Math.Max(MinimumChunkSize, mid - 1);
+        var rightCursor = mid;
+
+        var alternative = (Match: UInt64.MaxValue, Cursor: -1);
+
+        while (true)
         {
-            var (leftPrint, rightPrint) = (0UL, 0UL);
+            var progressed = false;
 
-            var leftCursor = Math.Max(MinimumChunkSize, mid - 1);
-            var rightCursor = mid;
-
-            while (true)
+            if (leftCursor >= MinimumChunkSize)
             {
-                var progressed = false;
+                _leftGearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
 
-                if (leftCursor >= MinimumChunkSize)
+                var match = leftPrint & _mask;
+
+                if (match == 0)
                 {
-                    _leftGearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
-
-                    if ((leftPrint & mask) == 0)
-                    {
-                        return leftCursor;
-                    }
-
-                    leftCursor -= 1;
-                    progressed = true;
+                    return leftCursor;
                 }
 
-                if (rightCursor < upper)
+                if (match < alternative.Match)
                 {
-                    _rightGearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
-
-                    if ((rightPrint & mask) == 0)
-                    {
-                        return rightCursor;
-                    }
-
-                    rightCursor += 1;
-                    progressed = true;
+                    alternative = (match, leftCursor);
                 }
 
-                if (!progressed)
-                {
-                    break;
-                }
+                leftCursor -= 1;
+                progressed = true;
             }
 
-            mask >>= 1;
+            if (rightCursor < upper)
+            {
+                _rightGearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
+
+                var match = rightPrint & _mask;
+
+                if (match == 0)
+                {
+                    return rightCursor;
+                }
+
+                if (match < alternative.Match)
+                {
+                    alternative = (match, rightCursor);
+                }
+
+                rightCursor += 1;
+                progressed = true;
+            }
+
+            if (!progressed)
+            {
+                break;
+            }
         }
 
-        return buffer.Length;
+        return alternative.Cursor != -1
+            ? alternative.Cursor
+            : buffer.Length;
     }
 
     private static ulong GenerateMask(int averageChunkSize, int normalizationLevel)
