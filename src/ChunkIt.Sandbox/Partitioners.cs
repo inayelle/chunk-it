@@ -10,9 +10,9 @@ internal static class Partitioners
 {
     private const int Kilobyte = 1024;
 
-    private const int MinimumChunkSize = 32 * Kilobyte;
+    private const int MinimumChunkSize = 8 * Kilobyte;
     private const int AverageChunkSize = MinimumChunkSize + (MaximumChunkSize - MinimumChunkSize) / 2;
-    private const int MaximumChunkSize = 128 * Kilobyte;
+    private const int MaximumChunkSize = 32 * Kilobyte;
 
     public static readonly IReadOnlyList<IPartitioner> Values = Enumerate().ToArray();
 
@@ -29,7 +29,7 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 5,
+            normalizationLevel: 7,
             gearTable: GearTable.Predefined(rotations: 0)
         );
 
@@ -46,8 +46,8 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 5,
-            leftGearTable: GearTable.Random(new Random(42)),
-            rightGearTable: GearTable.Random(new Random(96))
+            leftGearTable: GearTable.Predefined(rotations: 0),
+            rightGearTable: GearTable.Predefined(rotations: 13)
         );
 
         yield return new RapidAsymmetricMaximumPartitioner(
