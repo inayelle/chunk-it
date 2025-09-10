@@ -2,6 +2,7 @@ using System.Text;
 using AnyKit.Pipelines;
 using ChunkIt.Common.Extensions;
 using ScottPlot;
+using ScottPlot.TickGenerators;
 
 namespace ChunkIt.Sandbox.Plotting;
 
@@ -25,11 +26,6 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
         foreach (var (sourceFile, reports) in reportGroups)
         {
             var plot = new Plot();
-            plot.Title(GenerateSourceFileTitle(sourceFile));
-            plot.XLabel("Partitioner");
-            plot.YLabel("Saved ratio");
-            plot.Axes.Margins(bottom: 0);
-            plot.ShowLegend(Edge.Bottom);
 
             foreach (var (index, report) in reports.Index())
             {
@@ -46,11 +42,18 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
                 barPlot.LegendText = report.Partitioner.ToString()!;
             }
 
+            plot.Title(GenerateSourceFileTitle(sourceFile));
+            plot.XLabel("Partitioner");
+            plot.YLabel("Saved ratio");
+            plot.Axes.Margins(bottom: 0);
+            plot.ShowLegend(Edge.Right);
+            plot.Axes.Bottom.TickGenerator = new EmptyTickGenerator();
+
             multiplot.AddPlot(plot);
         }
 
         var plotPath = SandboxRuntime.Instance.GetPlotFilePath("saved_ratio");
-        multiplot.Save(plotPath, extraHeight: 400);
+        multiplot.Save(plotPath, extraWidth: 700);
 
         return next(context);
     }
