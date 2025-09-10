@@ -12,7 +12,8 @@ internal sealed class ChunkingPipeline
 
         builder.UsePipe(new CreateChunksPipe().Invoke);
         builder.UsePipe(new ValidateChunksPipe().Invoke);
-        builder.UsePipe(new CalculateSavingsPipe().Invoke);
+        builder.UsePipe(new CalculateFileSizePipe().Invoke);
+        builder.UsePipe(new CalculateIndexSizePipe().Invoke);
         builder.UsePipe(new CalculateDuplicatesPipe().Invoke);
         builder.UsePipe(new WriteChunksPipe().Invoke);
         builder.UsePipe(new CreateSummaryPipe().Invoke);

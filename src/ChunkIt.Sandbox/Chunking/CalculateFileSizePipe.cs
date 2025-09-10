@@ -2,7 +2,7 @@ using AnyKit.Pipelines;
 
 namespace ChunkIt.Sandbox.Chunking;
 
-internal sealed class CalculateSavingsPipe : IChunkingPipe
+internal sealed class CalculateFileSizePipe : IChunkingPipe
 {
     public async Task<ChunkingReport> Invoke(
         ChunkingContext context,
@@ -13,7 +13,7 @@ internal sealed class CalculateSavingsPipe : IChunkingPipe
 
         var compressedFileSize = context
             .Chunks
-            .DistinctBy(chunk => (chunk.HashString, chunk.Length))
+            .DistinctBy(chunk => chunk.HashString)
             .Sum(chunk => (long)chunk.Length);
 
         var savedBytes = originalFileSize - compressedFileSize;

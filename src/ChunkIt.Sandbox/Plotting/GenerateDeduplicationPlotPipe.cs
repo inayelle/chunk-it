@@ -19,41 +19,21 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
             .ToArray();
 
         var multiplot = new AdaptiveMultiplot(
-            rows: 1,
-            columns: reportGroups.Length
+            rows: reportGroups.Length,
+            columns: 2
         );
 
         foreach (var (sourceFile, reports) in reportGroups)
         {
-            var plot = new Plot();
+            var savedRatioPlot = CreateSavedRatioPlot(sourceFile, reports);
+            var indexRatioPlot = CreateIndexRatioPlot(sourceFile, reports);
 
-            foreach (var (index, report) in reports.Index())
-            {
-                var bar = new Bar
-                {
-                    Position = index,
-                    Value = report.SavedRatio,
-                    FillColor = PlotColors.ForIndex(index),
-                    LineColor = PlotColors.ForIndex(index),
-                    Label = report.SavedBytes.ToHumanReadableSize(),
-                };
-
-                var barPlot = plot.Add.Bar(bar);
-                barPlot.LegendText = report.Partitioner.ToString()!;
-            }
-
-            plot.Title(GenerateSourceFileTitle(sourceFile));
-            plot.XLabel("Partitioner");
-            plot.YLabel("Saved ratio");
-            plot.Axes.Margins(bottom: 0);
-            plot.ShowLegend(Edge.Right);
-            plot.Axes.Bottom.TickGenerator = new EmptyTickGenerator();
-
-            multiplot.AddPlot(plot);
+            multiplot.AddPlot(savedRatioPlot);
+            multiplot.AddPlot(indexRatioPlot);
         }
 
-        var plotPath = SandboxRuntime.Instance.GetPlotFilePath("saved_ratio");
-        multiplot.Save(plotPath, extraWidth: 700);
+        var plotPath = SandboxRuntime.Instance.GetPlotFilePath("deduplication");
+        multiplot.Save(plotPath, extraWidth: 500, extraHeight: 500);
 
         return next(context);
     }
@@ -66,5 +46,60 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
         sb.Append($"{sourceFile.Name} ({sourceFile.Size.ToHumanReadableSize()})");
 
         return sb.ToString();
+    }
+
+    private static Plot CreateSavedRatioPlot(SourceFile sourceFile, IReadOnlyList<ChunkingReport> reports)
+    {
+        var plot = new Plot();
+
+        foreach (var (index, report) in reports.Index())
+        {
+            var bar = new Bar
+            {
+                Position = index,
+                Value = report.SavedRatio,
+                FillColor = PlotColors.ForIndex(index),
+                LineColor = PlotColors.ForIndex(index),
+                Label = $"{report.SavedBytes.ToHumanReadableSize()} ({report.SavedRatio:F2}%)",
+            };
+
+            var barPlot = plot.Add.Bar(bar);
+            barPlot.LegendText = report.Partitioner.ToString()!;
+        }
+
+        plot.Title(GenerateSourceFileTitle(sourceFile));
+        plot.XLabel("Partitioner");
+        plot.YLabel("Saved ratio");
+        plot.Axes.Margins(bottom: 0);
+        plot.ShowLegend(Edge.Left);
+        plot.Axes.Bottom.TickGenerator = new EmptyTickGenerator();
+
+        return plot;
+    }
+
+    private static Plot CreateIndexRatioPlot(SourceFile _, IReadOnlyList<ChunkingReport> reports)
+    {
+        var plot = new Plot();
+
+        foreach (var (index, report) in reports.Index())
+        {
+            var bar = new Bar
+            {
+                Position = index,
+                Value = report.IndexRatio,
+                FillColor = PlotColors.ForIndex(index),
+                LineColor = PlotColors.ForIndex(index),
+                Label = $"{report.IndexBytes.ToHumanReadableSize()} ({report.IndexRatio:F2}%)",
+            };
+
+            plot.Add.Bar(bar);
+        }
+
+        plot.XLabel("Partitioner");
+        plot.YLabel("Index ratio");
+        plot.Axes.Margins(bottom: 0);
+        plot.Axes.Bottom.TickGenerator = new EmptyTickGenerator();
+
+        return plot;
     }
 }

@@ -33,15 +33,24 @@ internal static class Partitioners
             gearTable: GearTable.Predefined(rotations: 0)
         );
 
-        yield return new TwinPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 5,
-            gearTable: GearTable.Predefined(rotations: 0)
-        );
+        // yield return new TwinPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     normalizationLevel: 5,
+        //     gearTable: GearTable.Predefined(rotations: 0)
+        // );
 
-        yield return new TwinPartitioner(
+        // yield return new TwinPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     normalizationLevel: 5,
+        //     leftGearTable: GearTable.Predefined(rotations: 0),
+        //     rightGearTable: GearTable.Predefined(rotations: 13)
+        // );
+
+        yield return new TwinTailPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
@@ -49,18 +58,18 @@ internal static class Partitioners
             leftGearTable: GearTable.Predefined(rotations: 0),
             rightGearTable: GearTable.Predefined(rotations: 13)
         );
-
-        yield return new RapidAsymmetricMaximumPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
-
-        yield return new AsymmetricExtremumPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
+        //
+        // yield return new RapidAsymmetricMaximumPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
+        //
+        // yield return new AsymmetricExtremumPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
 
         yield return new SequentialPartitioner(
             minimumChunkSize: MinimumChunkSize,
