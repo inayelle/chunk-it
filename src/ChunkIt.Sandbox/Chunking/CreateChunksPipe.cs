@@ -15,14 +15,7 @@ internal sealed class CreateChunksPipe : IChunkingPipe
         AsyncPipeline<ChunkingContext, ChunkingReport> next
     )
     {
-        await using var sourceFileStream = new FileStream(
-            context.SourceFile.Path,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            BufferSize,
-            options: FileOptions.Asynchronous | FileOptions.SequentialScan
-        );
+        await using var sourceFileStream = context.SourceFile.OpenFileStream(BufferSize);
 
         var chunkReader = new ChunkReader(
             partitioner: context.Partitioner,

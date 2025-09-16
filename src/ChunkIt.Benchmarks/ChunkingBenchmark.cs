@@ -49,14 +49,7 @@ public class ChunkingBenchmark
     [GlobalSetup]
     public void GlobalSetup()
     {
-        _sourceFileStream = new FileStream(
-            SourceFile.Path,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            bufferSize: BufferSize,
-            options: FileOptions.Asynchronous | FileOptions.SequentialScan
-        );
+        _sourceFileStream = SourceFile.OpenFileStream(BufferSize);
     }
 
     [IterationSetup]

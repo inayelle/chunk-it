@@ -4,6 +4,8 @@ namespace ChunkIt.Sandbox;
 
 internal sealed class SourceFile : IEquatable<SourceFile>
 {
+    private const FileOptions DefaultOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
+
     public string Path { get; }
     public string Name { get; }
     public long Size { get; }
@@ -15,6 +17,18 @@ internal sealed class SourceFile : IEquatable<SourceFile>
         Path = fileInfo.FullName;
         Name = fileInfo.Name;
         Size = fileInfo.Length;
+    }
+
+    public FileStream OpenFileStream(int bufferSize = 4096, FileOptions? options = null)
+    {
+        return new FileStream(
+            Path,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            bufferSize,
+            options ?? DefaultOptions
+        );
     }
 
     public static implicit operator SourceFile(string path)
