@@ -1,6 +1,6 @@
 namespace ChunkIt.Sandbox;
 
-internal sealed class SandboxRuntime
+internal sealed class SandboxRuntime : IDisposable
 {
     private const string OutputsPath = "/storage/ina/workspace/personal/ChunkIt/outputs";
     private const string RunIdPath = $"{OutputsPath}/.runid";
@@ -17,13 +17,14 @@ internal sealed class SandboxRuntime
         RunId = File.Exists(RunIdPath)
             ? Int32.Parse(File.ReadAllText(RunIdPath)) + 1
             : 0;
-        File.WriteAllText(RunIdPath, $"{RunId:000}");
 
         _chunksPath = Path.Combine(OutputsPath, $"{RunId:000}", "chunks");
         Directory.CreateDirectory(_chunksPath);
 
         _plotsPath = Path.Combine(OutputsPath, $"{RunId:000}", "plots");
         Directory.CreateDirectory(_plotsPath);
+
+        Console.WriteLine($">>> RUN ID: {RunId:000} >>>");
     }
 
     public string GetChunksFilePath(string partitionerName, SourceFile sourceFile)
@@ -34,5 +35,12 @@ internal sealed class SandboxRuntime
     public string GetPlotFilePath(string plotName)
     {
         return Path.Combine(_plotsPath, $"{RunId:000}.{plotName}.png");
+    }
+
+    public void Dispose()
+    {
+        File.WriteAllText(RunIdPath, $"{RunId:000}");
+
+        Console.WriteLine($"<<< RUN ID: {RunId:000} <<<");
     }
 }
