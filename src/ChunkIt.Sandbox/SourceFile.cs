@@ -31,6 +31,18 @@ internal sealed class SourceFile : IEquatable<SourceFile>
         );
     }
 
+    public string GenerateVersionedPath(string version)
+    {
+        var fileName = System.IO.Path.GetFileNameWithoutExtension(Path);
+        var extension = System.IO.Path.GetExtension(Path);
+        var filePath = System.IO.Path.GetDirectoryName(Path)!;
+
+        return System.IO.Path.Combine(
+            filePath,
+            $"{fileName}-{version}{extension}"
+        );
+    }
+
     public static implicit operator SourceFile(string path)
     {
         return new SourceFile(path);

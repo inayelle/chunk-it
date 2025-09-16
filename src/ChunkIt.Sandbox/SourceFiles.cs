@@ -2,8 +2,6 @@ namespace ChunkIt.Sandbox;
 
 internal static class SourceFiles
 {
-    private const string InputsRoot = "/storage/ina/workspace/personal/ChunkIt/inputs";
-
     public static readonly IReadOnlyList<SourceFile> Values = Enumerate().ToArray();
 
     private static IEnumerable<SourceFile> Enumerate()
