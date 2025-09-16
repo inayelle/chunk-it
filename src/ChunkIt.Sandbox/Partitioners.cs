@@ -1,6 +1,8 @@
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Partitioners.AsymmetricExtremum;
+using ChunkIt.Partitioners.Fixed;
 using ChunkIt.Partitioners.Gear;
+using ChunkIt.Partitioners.Rabin;
 using ChunkIt.Partitioners.RapidAsymmetricMaximum;
 using ChunkIt.Partitioners.Sequential;
 
@@ -11,13 +13,21 @@ internal static class Partitioners
     private const int Kilobyte = 1024;
 
     private const int MinimumChunkSize = 8 * Kilobyte;
-    private const int AverageChunkSize = MinimumChunkSize + (MaximumChunkSize - MinimumChunkSize) / 2;
+    private const int AverageChunkSize = 16 * Kilobyte;
     private const int MaximumChunkSize = 32 * Kilobyte;
 
     public static readonly IReadOnlyList<IPartitioner> Values = Enumerate().ToArray();
 
     private static IEnumerable<IPartitioner> Enumerate()
     {
+        yield return new FixedPartitioner(chunkSize: AverageChunkSize);
+
+        yield return new RabinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
+
         yield return new GearPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
@@ -29,47 +39,38 @@ internal static class Partitioners
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 7,
+            normalizationLevel: 3,
             gearTable: GearTable.Predefined(rotations: 0)
         );
 
-        // yield return new TwinPartitioner(
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize,
-        //     normalizationLevel: 5,
-        //     gearTable: GearTable.Predefined(rotations: 0)
-        // );
-
-        // yield return new TwinPartitioner(
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize,
-        //     normalizationLevel: 5,
-        //     leftGearTable: GearTable.Predefined(rotations: 0),
-        //     rightGearTable: GearTable.Predefined(rotations: 13)
-        // );
-
-        yield return new TwinTailPartitioner(
+        yield return new TwinPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 5,
+            normalizationLevel: 3,
+            gearTable: GearTable.Predefined(rotations: 0)
+        );
+
+        yield return new TwinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 3,
             leftGearTable: GearTable.Predefined(rotations: 0),
             rightGearTable: GearTable.Predefined(rotations: 13)
         );
-        //
-        // yield return new RapidAsymmetricMaximumPartitioner(
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize
-        // );
-        //
-        // yield return new AsymmetricExtremumPartitioner(
-        //     minimumChunkSize: MinimumChunkSize,
-        //     averageChunkSize: AverageChunkSize,
-        //     maximumChunkSize: MaximumChunkSize
-        // );
+
+        yield return new RapidAsymmetricMaximumPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
+
+        yield return new AsymmetricExtremumPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
 
         yield return new SequentialPartitioner(
             minimumChunkSize: MinimumChunkSize,
@@ -77,7 +78,7 @@ internal static class Partitioners
             maximumChunkSize: MaximumChunkSize,
             mode: SequentialPartitionerMode.Increasing,
             sequenceLength: 5,
-            skipLength: 256,
+            skipLength: 512,
             skipTrigger: 50
         );
     }

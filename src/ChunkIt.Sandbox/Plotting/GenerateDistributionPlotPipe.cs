@@ -53,8 +53,8 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
     {
         var histogram = Histogram.WithBinSize(
             binSize: 256,
-            firstBin: report.Partitioner.MinimumChunkSize,
-            lastBin: report.Partitioner.MaximumChunkSize
+            firstBin: report.Chunks.Min(chunk => chunk.Length),
+            lastBin: report.Chunks.Max(chunk => chunk.Length)
         );
 
         var values = report

@@ -67,10 +67,12 @@ public class TwinPartitioner : IPartitioner
         var mid = Math.Min(buffer.Length, AverageChunkSize);
         var upper = buffer.Length;
 
+        var (leftPrint, rightPrint) = (0UL, 0UL);
+
         var leftCursor = Math.Max(MinimumChunkSize, mid - 1);
         var rightCursor = mid;
 
-        var (leftPrint, rightPrint) = (0UL, 0UL);
+        var alternative = (Match: UInt64.MaxValue, Cursor: -1);
 
         while (true)
         {
@@ -80,9 +82,16 @@ public class TwinPartitioner : IPartitioner
             {
                 _leftGearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
 
-                if ((leftPrint & _mask) == 0)
+                var match = leftPrint & _mask;
+
+                if (match == 0)
                 {
                     return leftCursor;
+                }
+
+                if (match < alternative.Match)
+                {
+                    alternative = (match, leftCursor);
                 }
 
                 leftCursor -= 1;
@@ -93,9 +102,16 @@ public class TwinPartitioner : IPartitioner
             {
                 _rightGearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
 
-                if ((rightPrint & _mask) == 0)
+                var match = rightPrint & _mask;
+
+                if (match == 0)
                 {
                     return rightCursor;
+                }
+
+                if (match < alternative.Match)
+                {
+                    alternative = (match, rightCursor);
                 }
 
                 rightCursor += 1;
@@ -104,9 +120,13 @@ public class TwinPartitioner : IPartitioner
 
             if (!progressed)
             {
-                return buffer.Length;
+                break;
             }
         }
+
+        return alternative.Cursor != -1
+            ? alternative.Cursor
+            : buffer.Length;
     }
 
     private static ulong GenerateMask(int averageChunkSize, int normalizationLevel)
@@ -122,7 +142,7 @@ public class TwinPartitioner : IPartitioner
 
     public override string ToString()
     {
-        var gearMode = _leftGearTable == _rightGearTable ? "single" : "double";
+        var gearMode = _leftGearTable == _rightGearTable ? "mono" : "duo";
 
         var builder = new DescriptionBuilder($"twin-{gearMode}");
 

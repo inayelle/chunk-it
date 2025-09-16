@@ -1,14 +1,14 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Reports;
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Hashers;
 using ChunkIt.Partitioners.AsymmetricExtremum;
 using ChunkIt.Partitioners.Fixed;
 using ChunkIt.Partitioners.Gear;
+using ChunkIt.Partitioners.Rabin;
 using ChunkIt.Partitioners.RapidAsymmetricMaximum;
+using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Benchmarks;
 
@@ -19,12 +19,16 @@ public class ChunkingBenchmark
     private const int Kilobyte = 1024;
     private const int BufferSize = Kilobyte * 1000 * 4;
 
+    private const int MinimumChunkSize = 8 * Kilobyte;
+    private const int AverageChunkSize = 16 * Kilobyte;
+    private const int MaximumChunkSize = 32 * Kilobyte;
+
     private FileStream _sourceFileStream;
 
-    [ParamsSource(nameof(GenerateSourceFilePaths))]
-    public SourceFilePath SourceFilePath { get; set; }
+    [ParamsSource(nameof(EnumerateSourceFilePaths))]
+    public SourceFile SourceFile { get; set; }
 
-    [ParamsSource(nameof(GeneratePartitioners))]
+    [ParamsSource(nameof(EnumeratePartitioners))]
     public IPartitioner Partitioner { get; set; }
 
     [Benchmark]
@@ -46,10 +50,10 @@ public class ChunkingBenchmark
     public void GlobalSetup()
     {
         _sourceFileStream = new FileStream(
-            SourceFilePath.Path,
+            SourceFile.Path,
             FileMode.Open,
             FileAccess.Read,
-            FileShare.None,
+            FileShare.Read,
             bufferSize: BufferSize,
             options: FileOptions.Asynchronous | FileOptions.SequentialScan
         );
@@ -67,93 +71,83 @@ public class ChunkingBenchmark
         _sourceFileStream.Dispose();
     }
 
-    public static IEnumerable<SourceFilePath> GenerateSourceFilePaths()
+    public static IEnumerable<SourceFile> EnumerateSourceFilePaths()
     {
-        // yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-6.16.4.tar";
-        // yield return "/storage/ina/workspace/personal/ChunkIt/inputs/linux-combined.tar";
-
-        yield return "/home/ina/downloads/gcc/gcc.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/gcc/gcc.tar";
     }
 
-    public static IEnumerable<IPartitioner> GeneratePartitioners()
+    public static IEnumerable<IPartitioner> EnumeratePartitioners()
     {
-        // int[] minimumChunkSizes = [1 * Kilobyte, 2 * Kilobyte, 4 * Kilobyte];
-        int[] minimumChunkSizes = [4 * Kilobyte];
+        yield return new FixedPartitioner(chunkSize: AverageChunkSize);
 
-        foreach (var minimumChunkSize in minimumChunkSizes)
-        {
-            var maximumChunkSize = minimumChunkSize * 8;
-            var averageChunkSize = minimumChunkSize + (maximumChunkSize - minimumChunkSize) / 2;
+        yield return new RabinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
 
-            yield return new FixedPartitioner(
-                chunkSize: averageChunkSize
-            );
+        yield return new GearPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            gearTable: GearTable.Predefined(rotations: 0)
+        );
 
-            yield return new GearPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                gearTable: GearTable.Predefined(rotations: 0)
-            );
+        yield return new FastPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 3,
+            gearTable: GearTable.Predefined(rotations: 0)
+        );
 
-            yield return new FastPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                normalizationLevel: 3,
-                gearTable: GearTable.Predefined(rotations: 0)
-            );
+        yield return new TwinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 5,
+            gearTable: GearTable.Predefined(rotations: 0)
+        );
 
-            yield return new TwinPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize,
-                normalizationLevel: 3,
-                leftGearTable: GearTable.Predefined(rotations: 0),
-                rightGearTable: GearTable.Predefined(rotations: 17)
-            );
+        yield return new TwinPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            normalizationLevel: 5,
+            leftGearTable: GearTable.Predefined(rotations: 0),
+            rightGearTable: GearTable.Predefined(rotations: 13)
+        );
 
-            yield return new RapidAsymmetricMaximumPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize
-            );
+        yield return new RapidAsymmetricMaximumPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
 
-            yield return new AsymmetricExtremumPartitioner(
-                minimumChunkSize: minimumChunkSize,
-                averageChunkSize: averageChunkSize,
-                maximumChunkSize: maximumChunkSize
-            );
-        }
-    }
-}
+        yield return new AsymmetricExtremumPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize
+        );
 
-public sealed class ChunkingBenchmarkConfig : ManualConfig
-{
-    public ChunkingBenchmarkConfig()
-    {
-        SummaryStyle = SummaryStyle.Default.WithMaxParameterColumnWidth(64);
+        yield return new SequentialPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            mode: SequentialPartitionerMode.Increasing,
+            sequenceLength: 5,
+            skipLength: 512,
+            skipTrigger: 50
+        );
 
-        WithOptions(ConfigOptions.DisableLogFile);
-    }
-}
-
-public sealed class SourceFilePath
-{
-    public string Path { get; }
-
-    public SourceFilePath(string path)
-    {
-        Path = path;
-    }
-
-    public override string ToString()
-    {
-        return System.IO.Path.GetFileName(Path);
-    }
-
-    public static implicit operator SourceFilePath(string path)
-    {
-        return new SourceFilePath(path);
+        yield return new SequentialPartitioner(
+            minimumChunkSize: MinimumChunkSize,
+            averageChunkSize: AverageChunkSize,
+            maximumChunkSize: MaximumChunkSize,
+            mode: SequentialPartitionerMode.Decreasing,
+            sequenceLength: 5,
+            skipLength: 512,
+            skipTrigger: 50
+        );
     }
 }
