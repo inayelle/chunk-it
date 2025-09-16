@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnosers;
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Hashers;
@@ -8,12 +7,13 @@ using ChunkIt.Partitioners.Fixed;
 using ChunkIt.Partitioners.Gear;
 using ChunkIt.Partitioners.Rabin;
 using ChunkIt.Partitioners.RapidAsymmetricMaximum;
-using ChunkIt.Partitioners.Sequential;
 
 namespace ChunkIt.Benchmarks;
 
 [MemoryDiagnoser]
 [Config(typeof(ChunkingBenchmarkConfig))]
+[MinIterationCount(10)]
+[MinIterationTime(100)]
 public class ChunkingBenchmark
 {
     private const int Kilobyte = 1024;
@@ -66,7 +66,9 @@ public class ChunkingBenchmark
 
     public static IEnumerable<SourceFile> EnumerateSourceFilePaths()
     {
-        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/gcc/gcc.tar";
+        // yield return "/storage/ina/workspace/personal/ChunkIt/inputs/gcc/gcc.tar";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/random/random-1GB.bin";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/random/random-5GB.bin";
     }
 
     public static IEnumerable<IPartitioner> EnumeratePartitioners()
@@ -123,24 +125,24 @@ public class ChunkingBenchmark
             maximumChunkSize: MaximumChunkSize
         );
 
-        yield return new SequentialPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            mode: SequentialPartitionerMode.Increasing,
-            sequenceLength: 5,
-            skipLength: 512,
-            skipTrigger: 50
-        );
-
-        yield return new SequentialPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            mode: SequentialPartitionerMode.Decreasing,
-            sequenceLength: 5,
-            skipLength: 512,
-            skipTrigger: 50
-        );
+        // yield return new SequentialPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     sequenceLength: 5,
+        //     skipLength: 512,
+        //     skipTrigger: 50
+        // );
+        //
+        // yield return new SequentialPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     mode: SequentialPartitionerMode.Decreasing,
+        //     sequenceLength: 5,
+        //     skipLength: 512,
+        //     skipTrigger: 50
+        // );
     }
 }
