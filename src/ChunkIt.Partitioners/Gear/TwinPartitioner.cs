@@ -72,7 +72,7 @@ public class TwinPartitioner : IPartitioner
         var leftCursor = Math.Max(MinimumChunkSize, mid - 1);
         var rightCursor = mid;
 
-        var alternative = (Match: UInt64.MaxValue, Cursor: -1);
+        var alternative = (Match: UInt64.MaxValue, Cursor: 0);
 
         while (true)
         {
@@ -124,7 +124,7 @@ public class TwinPartitioner : IPartitioner
             }
         }
 
-        return alternative.Cursor != -1
+        return alternative.Cursor != 0
             ? alternative.Cursor
             : buffer.Length;
     }
