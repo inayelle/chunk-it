@@ -67,7 +67,7 @@ public class TwinPartitioner : IPartitioner
         var mid = Math.Min(buffer.Length, AverageChunkSize);
         var upper = buffer.Length;
 
-        var (leftPrint, rightPrint) = (0UL, 0UL);
+        var (leftFingerprint, rightFingerprint) = (0UL, 0UL);
 
         var leftCursor = Math.Max(MinimumChunkSize, mid - 1);
         var rightCursor = mid;
@@ -80,9 +80,9 @@ public class TwinPartitioner : IPartitioner
 
             if (leftCursor >= MinimumChunkSize)
             {
-                _leftGearTable.Fingerprint(ref leftPrint, buffer[leftCursor]);
+                _leftGearTable.Fingerprint(ref leftFingerprint, buffer[leftCursor]);
 
-                var match = leftPrint & _mask;
+                var match = leftFingerprint & _mask;
 
                 if (match == 0)
                 {
@@ -100,9 +100,9 @@ public class TwinPartitioner : IPartitioner
 
             if (rightCursor < upper)
             {
-                _rightGearTable.Fingerprint(ref rightPrint, buffer[rightCursor]);
+                _rightGearTable.Fingerprint(ref rightFingerprint, buffer[rightCursor]);
 
-                var match = rightPrint & _mask;
+                var match = rightFingerprint & _mask;
 
                 if (match == 0)
                 {

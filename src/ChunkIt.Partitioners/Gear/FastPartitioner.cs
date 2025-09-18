@@ -45,11 +45,11 @@ public class FastPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
+        var mid = Math.Min(buffer.Length, AverageChunkSize);
+        var upper = buffer.Length;
+
         var fingerprint = 0UL;
         var cursor = MinimumChunkSize;
-
-        var upper = Math.Min(buffer.Length, MaximumChunkSize);
-        var mid = Math.Min(upper, AverageChunkSize);
 
         for (; cursor < mid; cursor++)
         {
