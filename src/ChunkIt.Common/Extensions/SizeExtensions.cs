@@ -6,12 +6,12 @@ public static class SizeExtensions
 
     private static readonly string[] Units =
     [
-        "b",
-        "Kb",
-        "Mb",
-        "Gb",
-        "Tb",
-        "Eb",
+        "B",
+        "KB",
+        "MB",
+        "GB",
+        "TB",
+        "EB",
     ];
 
     public static string ToHumanReadableSize(this long bytesCount)
