@@ -4,6 +4,22 @@
         <OutputType>exe</OutputType>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <Optimize>true</Optimize>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <PublishAot>true</PublishAot>
+        <TieredCompilation>true</TieredCompilation>
+        <TieredPGO>true</TieredPGO>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <ReadyToRunComposite>true</ReadyToRunComposite>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>full</TrimMode>
+        <StripSymbols>true</StripSymbols>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+    </PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\ChunkIt.Hashers\ChunkIt.Hashers.csproj"/>
         <ProjectReference Include="..\ChunkIt.Partitioners\ChunkIt.Partitioners.csproj"/>

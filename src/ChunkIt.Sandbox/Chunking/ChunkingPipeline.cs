@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AnyKit.Pipelines;
 
 namespace ChunkIt.Sandbox.Chunking;
@@ -15,7 +16,12 @@ internal sealed class ChunkingPipeline
         builder.UsePipe(new CalculateFileSizePipe().Invoke);
         builder.UsePipe(new CalculateIndexSizePipe().Invoke);
         builder.UsePipe(new CalculateDuplicatesPipe().Invoke);
-        builder.UsePipe(new WriteChunksPipe().Invoke);
+
+        if (RuntimeFeature.IsDynamicCodeSupported)
+        {
+            builder.UsePipe(new WriteChunksPipe().Invoke);
+        }
+
         builder.UsePipe(new CreateSummaryPipe().Invoke);
 
         _pipeline = builder.Build();
