@@ -10,10 +10,7 @@ using ChunkIt.Partitioners.RapidAsymmetricMaximum;
 
 namespace ChunkIt.Benchmarks;
 
-[MemoryDiagnoser]
 [Config(typeof(ChunkingBenchmarkConfig))]
-[MinIterationCount(10)]
-[MinIterationTime(100)]
 public class ChunkingBenchmark
 {
     private const int Kilobyte = 1024;
