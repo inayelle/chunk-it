@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Sequential;
+namespace ChunkIt.Partitioning.Sequential;
 
 public class AdaptiveSequentialPartitioner : IPartitioner
 {

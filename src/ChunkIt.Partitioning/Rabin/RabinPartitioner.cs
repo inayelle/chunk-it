@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Rabin;
+namespace ChunkIt.Partitioning.Rabin;
 
 public class RabinPartitioner : IPartitioner
 {

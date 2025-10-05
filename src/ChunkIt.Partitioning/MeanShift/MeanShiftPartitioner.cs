@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.MeanShift;
+namespace ChunkIt.Partitioning.MeanShift;
 
 public sealed class MeanShiftPartitioner : IPartitioner
 {

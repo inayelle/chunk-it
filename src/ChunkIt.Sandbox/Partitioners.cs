@@ -1,10 +1,10 @@
 using ChunkIt.Common.Abstractions;
-using ChunkIt.Partitioners.AsymmetricExtremum;
-using ChunkIt.Partitioners.Fixed;
-using ChunkIt.Partitioners.Gear;
-using ChunkIt.Partitioners.Rabin;
-using ChunkIt.Partitioners.RapidAsymmetricMaximum;
-using ChunkIt.Partitioners.Sequential;
+using ChunkIt.Partitioning.AsymmetricExtremum;
+using ChunkIt.Partitioning.Fixed;
+using ChunkIt.Partitioning.Gear;
+using ChunkIt.Partitioning.Rabin;
+using ChunkIt.Partitioning.RapidAsymmetricMaximum;
+using ChunkIt.Partitioning.Sequential;
 
 namespace ChunkIt.Sandbox;
 

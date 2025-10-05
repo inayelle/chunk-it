@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using ChunkIt.Common.Extensions;
 
-namespace ChunkIt.Partitioners.Gear;
+namespace ChunkIt.Partitioning.Gear;
 
 public sealed class GearTable
 {

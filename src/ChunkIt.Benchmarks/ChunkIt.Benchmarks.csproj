@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ChunkIt.Hashers\ChunkIt.Hashers.csproj"/>
-        <ProjectReference Include="..\ChunkIt.Partitioners\ChunkIt.Partitioners.csproj"/>
+        <ProjectReference Include="..\ChunkIt.Hashing\ChunkIt.Hashing.csproj" />
+        <ProjectReference Include="..\ChunkIt.Partitioning\ChunkIt.Partitioning.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Fixed;
+namespace ChunkIt.Partitioning.Fixed;
 
 public class FixedPartitioner : IPartitioner
 {

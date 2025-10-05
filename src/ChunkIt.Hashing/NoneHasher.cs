@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Hashers;
+namespace ChunkIt.Hashing;
 
 public sealed class NoneHasher : IHasher
 {

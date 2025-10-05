@@ -1,4 +1,4 @@
-namespace ChunkIt.Partitioners.Sequential;
+namespace ChunkIt.Partitioning.Sequential;
 
 internal static class SequentialComparators
 {

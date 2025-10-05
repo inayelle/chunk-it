@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.MaxP;
+namespace ChunkIt.Partitioning.MaxP;
 
 public class MaxPPartitioner : IPartitioner
 {

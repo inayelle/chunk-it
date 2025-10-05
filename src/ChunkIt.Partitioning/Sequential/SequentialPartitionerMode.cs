@@ -1,4 +1,4 @@
-namespace ChunkIt.Partitioners.Sequential;
+namespace ChunkIt.Partitioning.Sequential;
 
 public enum SequentialPartitionerMode
 {

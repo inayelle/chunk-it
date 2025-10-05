@@ -2,7 +2,7 @@ using System.Numerics;
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Gear;
+namespace ChunkIt.Partitioning.Gear;
 
 public class SlidingGearPartitioner : IPartitioner
 {

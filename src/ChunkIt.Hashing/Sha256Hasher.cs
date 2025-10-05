@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Hashers;
+namespace ChunkIt.Hashing;
 
 public sealed class Sha256Hasher : IHasher
 {

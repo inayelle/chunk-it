@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using AnyKit.Pipelines;
 using ChunkIt.Common;
-using ChunkIt.Hashers;
+using ChunkIt.Hashing;
 
 namespace ChunkIt.Sandbox.Chunking;
 

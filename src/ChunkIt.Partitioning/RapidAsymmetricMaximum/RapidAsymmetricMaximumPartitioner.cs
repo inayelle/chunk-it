@@ -1,9 +1,9 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.AsymmetricExtremum;
+namespace ChunkIt.Partitioning.RapidAsymmetricMaximum;
 
-public class AsymmetricExtremumPartitioner : IPartitioner
+public class RapidAsymmetricMaximumPartitioner : IPartitioner
 {
     private readonly int _windowSize;
 
@@ -11,7 +11,7 @@ public class AsymmetricExtremumPartitioner : IPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
-    public AsymmetricExtremumPartitioner(
+    public RapidAsymmetricMaximumPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize
@@ -36,31 +36,32 @@ public class AsymmetricExtremumPartitioner : IPartitioner
             buffer = buffer.Slice(start: 0, length: MaximumChunkSize);
         }
 
-        var max = (Value: buffer[0], Offset: 0);
-        var cursor = 1;
+        var maxValue = Byte.MinValue;
+        var windowSize = Math.Min(_windowSize, buffer.Length);
+        var cursor = 0;
 
-        while (cursor < buffer.Length)
+        for (; cursor < windowSize; cursor++)
         {
-            if (buffer[cursor] > max.Value)
+            if (buffer[cursor] > maxValue)
             {
-                max = (Value: buffer[cursor], Offset: cursor);
-            }
-            else if (cursor >= MinimumChunkSize && cursor == max.Offset + _windowSize)
-            {
-                return cursor;
-            }
-            else
-            {
-                cursor += 1;
+                maxValue = buffer[cursor];
             }
         }
 
-        return buffer.Length;
+        for (; cursor < buffer.Length; cursor++)
+        {
+            if (buffer[cursor] >= maxValue)
+            {
+                return cursor;
+            }
+        }
+
+        return cursor;
     }
 
     public override string ToString()
     {
-        var builder = new DescriptionBuilder("asymmetric-extremum");
+        var builder = new DescriptionBuilder("rapid-asymmetric-maximum");
 
         return builder
             .AddParameter("min", MinimumChunkSize)

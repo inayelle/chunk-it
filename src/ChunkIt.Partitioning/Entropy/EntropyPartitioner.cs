@@ -1,7 +1,7 @@
 using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
-namespace ChunkIt.Partitioners.Entropy;
+namespace ChunkIt.Partitioning.Entropy;
 
 public class EntropyPartitioner : IPartitioner
 {
