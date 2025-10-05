@@ -4,10 +4,12 @@ namespace ChunkIt.Sandbox.Chunking;
 
 internal sealed class ChunkingContext
 {
-    private readonly List<Chunk> _chunks;
-    private readonly HashSet<int> _progress;
-    private readonly Action<int> _onProgress;
+    public delegate void OnProgressChanged(int progress);
 
+    private readonly List<Chunk> _chunks;
+    private readonly OnProgressChanged _onProgressChanged;
+
+    private int _totalProgress;
     private long _totalChunksLength;
 
     public IPartitioner Partitioner { get; }
@@ -15,11 +17,10 @@ internal sealed class ChunkingContext
 
     public IReadOnlyList<Chunk> Chunks => _chunks;
 
-    public ChunkingContext(IPartitioner partitioner, SourceFile sourceFile, Action<int> onProgress)
+    public ChunkingContext(IPartitioner partitioner, SourceFile sourceFile, OnProgressChanged onProgressChanged)
     {
         _chunks = new List<Chunk>(capacity: 100_000);
-        _progress = new HashSet<int>(capacity: 100);
-        _onProgress = onProgress;
+        _onProgressChanged = onProgressChanged;
 
         Partitioner = partitioner;
         SourceFile = sourceFile;
@@ -31,11 +32,14 @@ internal sealed class ChunkingContext
 
         _totalChunksLength += chunk.Length;
 
-        var progress = (int)(_totalChunksLength / (float)SourceFile.Size * 100);
+        var currentProgress = (int)(_totalChunksLength / (float)SourceFile.Size * 100);
 
-        if (_progress.Add(progress))
+        if (currentProgress <= _totalProgress)
         {
-            _onProgress.Invoke(progress);
+            return;
         }
+
+        _totalProgress = currentProgress;
+        _onProgressChanged.Invoke(currentProgress);
     }
 }
