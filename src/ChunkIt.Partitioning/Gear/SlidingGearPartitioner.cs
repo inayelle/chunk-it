@@ -52,7 +52,7 @@ public class SlidingGearPartitioner : IPartitioner
         var cursor = MinimumChunkSize;
         while (cursor < upper)
         {
-            _gearTable.Fingerprint(ref fp, buffer[cursor]);
+            _gearTable.Fingerprint(ref fp, in buffer[cursor]);
 
             var idx = Math.Min((cursor - MinimumChunkSize) / Block, _masks.Length - 1);
             var mask = _masks[idx];

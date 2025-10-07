@@ -53,7 +53,7 @@ public class FastPartitioner : IPartitioner
 
         for (; cursor < mid; cursor++)
         {
-            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
+            _gearTable.Fingerprint(ref fingerprint, in buffer[cursor]);
 
             if ((fingerprint & _strictMask) == 0)
             {
@@ -63,7 +63,7 @@ public class FastPartitioner : IPartitioner
 
         for (; cursor < upper; cursor++)
         {
-            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
+            _gearTable.Fingerprint(ref fingerprint, in buffer[cursor]);
 
             if ((fingerprint & _laxMask) == 0)
             {
