@@ -263,9 +263,9 @@ file static class PredefinedGearTable
 
         var table = new ulong[targetTable.Length];
 
-        if (rotations is < 0 or > 32)
+        if (rotations is < 0 or > 63)
         {
-            throw new ArgumentException("Rotations must be in range [0; 32].", nameof(rotations));
+            throw new ArgumentException("Rotations must be in range [0; 63].", nameof(rotations));
         }
 
         for (var index = 0; index < table.Length; index++)
