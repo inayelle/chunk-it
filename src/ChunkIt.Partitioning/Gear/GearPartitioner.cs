@@ -45,7 +45,7 @@ public class GearPartitioner : IPartitioner
 
         for (var cursor = 0; cursor < buffer.Length; cursor++)
         {
-            _gearTable.Fingerprint(ref fingerprint, buffer[cursor]);
+            _gearTable.Fingerprint(ref fingerprint, in buffer[cursor]);
 
             if ((fingerprint & _mask) == 0 && cursor >= MinimumChunkSize)
             {
