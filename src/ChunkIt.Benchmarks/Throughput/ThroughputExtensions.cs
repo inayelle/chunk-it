@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Benchmarks.Throughput;
 

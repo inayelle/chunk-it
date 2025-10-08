@@ -1,8 +1,8 @@
 using ChunkIt.Common.Extensions;
 
-namespace ChunkIt.Sandbox;
+namespace ChunkIt.Common.Abstractions;
 
-internal sealed class SourceFile : IEquatable<SourceFile>
+public sealed class SourceFile : IEquatable<SourceFile>
 {
     public string Path { get; }
     public string Name { get; }

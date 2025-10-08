@@ -22,6 +22,8 @@ public class ChunkingBenchmark
 
     private FileStream _sourceFileStream;
 
+    private ChunkReader _chunkReader;
+
     [ParamsSource(nameof(EnumerateSourceFilePaths))]
     public SourceFile SourceFile { get; set; }
 
@@ -31,11 +33,9 @@ public class ChunkingBenchmark
     [Benchmark]
     public async Task<ulong> Run()
     {
-        var reader = new ChunkReader(Partitioner, NoneHasher.Instance, BufferSize);
-
         ulong length = 0;
 
-        await foreach (var chunkLength in reader.ReadChunkLengthsAsync(_sourceFileStream).ConfigureAwait(false))
+        await foreach (var chunkLength in _chunkReader.ReadChunkLengthsAsync(_sourceFileStream).ConfigureAwait(false))
         {
             length += (ulong)chunkLength;
         }
@@ -47,6 +47,8 @@ public class ChunkingBenchmark
     public void GlobalSetup()
     {
         _sourceFileStream = SourceFile.OpenFileStream(BufferSize);
+
+        _chunkReader = new ChunkReader(Partitioner, NoneHasher.Instance, BufferSize);
     }
 
     [IterationSetup]
