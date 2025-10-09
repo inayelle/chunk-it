@@ -20,27 +20,27 @@ internal static class Partitioners
 
     private static IEnumerable<IPartitioner> Enumerate()
     {
-        yield return new FixedPartitioner(chunkSize: AverageChunkSize);
-
-        yield return new RabinPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
-
-        yield return new GearPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            gearTable: GearTable.Predefined(rotations: 0)
-        );
+        // yield return new FixedPartitioner(chunkSize: AverageChunkSize);
+        //
+        // yield return new RabinPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
+        //
+        // yield return new GearPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     gearTable: GearTable.Predefined(rotations: 0)
+        // );
 
         yield return new FastPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            gearTable: GearTable.Predefined(rotations: 0)
+            gearTable: GearTable.Predefined(rotations: 0, tableIndex: 0)
         );
 
         yield return new TwinPartitioner(
@@ -48,7 +48,7 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            gearTable: GearTable.Predefined(rotations: 0)
+            gearTable: GearTable.Predefined(rotations: 0, tableIndex: 0)
         );
 
         yield return new TwinPartitioner(
@@ -56,30 +56,30 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            leftGearTable: GearTable.Predefined(rotations: 0),
-            rightGearTable: GearTable.Predefined(rotations: 13)
+            leftGearTable: GearTable.Predefined(rotations: 0, tableIndex: 0),
+            rightGearTable: GearTable.Predefined(rotations: 0, tableIndex: 1)
         );
 
-        yield return new RapidAsymmetricMaximumPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
-
-        yield return new AsymmetricExtremumPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
-
-        yield return new SequentialPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            mode: SequentialPartitionerMode.Increasing,
-            sequenceLength: 5,
-            skipLength: 512,
-            skipTrigger: 50
-        );
+        // yield return new RapidAsymmetricMaximumPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
+        //
+        // yield return new AsymmetricExtremumPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
+        //
+        // yield return new SequentialPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     mode: SequentialPartitionerMode.Increasing,
+        //     sequenceLength: 5,
+        //     skipLength: 512,
+        //     skipTrigger: 50
+        // );
     }
 }

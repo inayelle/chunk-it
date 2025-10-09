@@ -1,4 +1,5 @@
 using AnyKit.Pipelines;
+using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Sandbox.Chunking;
 
@@ -16,7 +17,7 @@ internal sealed class WriteChunksPipe : IChunkingPipe
                 Id = chunk.Id,
                 Offset = chunk.Offset,
                 Length = chunk.Length,
-                Hash = chunk.HashString,
+                Hash = chunk.Hash.ToHexString(),
             }
         );
 

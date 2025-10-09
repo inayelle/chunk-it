@@ -1,4 +1,5 @@
 using AnyKit.Pipelines;
+using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Sandbox.Chunking;
 
@@ -19,7 +20,7 @@ internal sealed class CalculateIndexSizePipe : IChunkingPipe
 
         var uniqueChunksCount = context
             .Chunks
-            .DistinctBy(chunk => chunk.HashString)
+            .DistinctBy(chunk => chunk.Hash, ByteArrayEqualityComparer.Instance)
             .LongCount();
 
         var indexBytes = (FileIdSize + ChunkIdSize + OffsetSize + LengthSize + HashSize) * uniqueChunksCount;

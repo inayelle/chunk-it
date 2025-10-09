@@ -1,4 +1,5 @@
 using AnyKit.Pipelines;
+using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Sandbox.Chunking;
 
@@ -13,7 +14,7 @@ internal sealed class CalculateFileSizePipe : IChunkingPipe
 
         var compressedFileSize = context
             .Chunks
-            .DistinctBy(chunk => chunk.HashString)
+            .DistinctBy(chunk => chunk.Hash, ByteArrayEqualityComparer.Instance)
             .Sum(chunk => (long)chunk.Length);
 
         var savedBytes = originalFileSize - compressedFileSize;

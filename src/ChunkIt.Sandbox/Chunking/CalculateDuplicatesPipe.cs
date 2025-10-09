@@ -1,4 +1,5 @@
 using AnyKit.Pipelines;
+using ChunkIt.Common.Extensions;
 
 namespace ChunkIt.Sandbox.Chunking;
 
@@ -11,22 +12,22 @@ internal sealed class CalculateDuplicatesPipe : IChunkingPipe
     {
         var chunks = context.Chunks
             .GroupBy(
-                chunk => (chunk.HashString, chunk.Length),
-                static (key, chunks) => new
+                chunk => chunk.Hash,
+                static (hash, chunks) => new
                 {
-                    Hash = key.HashString,
-                    Length = key.Length,
+                    Hash = hash,
                     Count = chunks.Count(),
-                }
+                },
+                ByteArrayEqualityComparer.Instance
             )
             .OrderByDescending(group => group.Count)
             .ToArray();
 
         var report = await next(context);
 
-        report.DistinctChunkHashes = chunks.Count(chunk => chunk.Count == 1);
+        report.DistinctChunkHashes = chunks.Count(group => group.Count == 1);
 
-        report.DuplicateChunkHashes = chunks.Count(chunk => chunk.Count > 1);
+        report.DuplicateChunkHashes = chunks.Count(group => group.Count > 1);
 
         report.DuplicateChunkEntries = chunks
             .Where(chunk => chunk.Count > 1)

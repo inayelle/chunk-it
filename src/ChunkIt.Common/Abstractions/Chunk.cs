@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace ChunkIt.Common.Abstractions;
 
 public readonly struct Chunk
@@ -8,18 +6,4 @@ public readonly struct Chunk
     public required long Offset { get; init; }
     public required int Length { get; init; }
     public required byte[] Hash { get; init; }
-
-    public string HashString => ToHexString();
-
-    private string ToHexString()
-    {
-        var sb = new StringBuilder();
-
-        foreach (var hashByte in Hash)
-        {
-            sb.Append($"{hashByte:x2}");
-        }
-
-        return sb.ToString();
-    }
 }
