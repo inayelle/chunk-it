@@ -9,20 +9,22 @@ internal sealed class ChunkingPipeline
 
     public ChunkingPipeline()
     {
-        var builder = new AsyncPipelineBuilder<ChunkingContext, ChunkingReport>();
+        var builder = new ChunkingPipelineBuilder();
 
-        builder.UsePipe(new ExecuteChunkingPipe().Invoke);
-        builder.UsePipe(new ValidateChunksPipe().Invoke);
-        builder.UsePipe(new CalculateFileSizePipe().Invoke);
-        builder.UsePipe(new CalculateIndexSizePipe().Invoke);
-        builder.UsePipe(new CalculateDuplicatesPipe().Invoke);
+        builder
+            .UsePipe<ExecuteChunkingPipe>()
+            .UsePipe<ValidateChunksPipe>()
+            .UsePipe<CalculateAverageChunkSizePipe>()
+            .UsePipe<CalculateFileSizePipe>()
+            .UsePipe<CalculateIndexSizePipe>()
+            .UsePipe<CalculateDuplicatesPipe>();
 
         if (RuntimeFeature.IsDynamicCodeSupported)
         {
-            builder.UsePipe(new WriteChunksPipe().Invoke);
+            builder.UsePipe<WriteChunksPipe>();
         }
 
-        builder.UsePipe(new CreateChunkingReportPipe().Invoke);
+        builder.UsePipe<CreateChunkingReportPipe>();
 
         _pipeline = builder.Build();
     }
@@ -30,5 +32,18 @@ internal sealed class ChunkingPipeline
     public Task<ChunkingReport> Invoke(ChunkingContext context)
     {
         return _pipeline.Invoke(context);
+    }
+}
+
+file sealed class ChunkingPipelineBuilder : AsyncPipelineBuilder<ChunkingContext, ChunkingReport>
+{
+    public ChunkingPipelineBuilder UsePipe<TPipe>()
+        where TPipe : IChunkingPipe, new()
+    {
+        var pipe = new TPipe();
+
+        base.UsePipe(pipe.Invoke);
+
+        return this;
     }
 }

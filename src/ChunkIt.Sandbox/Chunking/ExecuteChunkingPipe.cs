@@ -34,7 +34,6 @@ internal sealed class ExecuteChunkingPipe : IChunkingPipe
         var report = await next(context);
 
         report.Elapsed = elapsed;
-        report.AverageChunkSize = (int)Math.Ceiling(context.Chunks.Average(chunk => chunk.Length));
 
         return report;
     }

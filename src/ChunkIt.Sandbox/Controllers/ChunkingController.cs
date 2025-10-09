@@ -30,6 +30,17 @@ internal sealed class ChunkingController : IController
 
                 var chunkingReport = await chunkingPipeline.Invoke(chunkingContext);
 
+                if (chunkingReport is not { IsValid: true })
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(
+                        $" error: partitioner yielded invalid chunks. " +
+                        $"Expected size: {chunkingReport.SourceFile.Size}, " +
+                        $"actual size: {chunkingReport.Chunks.Sum(chunk => (long)chunk.Length)}"
+                    );
+                    Console.ResetColor();
+                }
+
                 chunkingReports.Add(chunkingReport);
 
                 Console.WriteLine($" elapsed: {chunkingReport.Elapsed.TotalMilliseconds} ms.");
