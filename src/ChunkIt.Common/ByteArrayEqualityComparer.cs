@@ -1,4 +1,4 @@
-namespace ChunkIt.Common.Extensions;
+namespace ChunkIt.Common;
 
 public sealed class ByteArrayEqualityComparer : IEqualityComparer<byte[]>
 {

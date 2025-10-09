@@ -12,7 +12,6 @@ internal sealed class ChunkingReport
 
     public bool IsValid { get; set; }
 
-    public int TotalChunks { get; set; }
     public int AverageChunkSize { get; set; }
 
     public int DistinctChunkHashes { get; set; }

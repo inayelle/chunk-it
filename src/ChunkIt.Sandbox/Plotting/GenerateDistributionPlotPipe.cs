@@ -44,7 +44,7 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         var histogram = CreateHistogram(report);
 
         plot.Add.Histogram(histogram, PlotColors.ForIndex(index));
-        plot.Add.Annotation($"Total chunks: {report.TotalChunks}");
+        plot.Add.Annotation($"Total chunks: {report.Chunks.Count}");
 
         return plot;
     }
