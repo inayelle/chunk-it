@@ -2,7 +2,7 @@ using AnyKit.Pipelines;
 
 namespace ChunkIt.Sandbox.Chunking;
 
-internal sealed class CreateSummaryPipe : IChunkingPipe
+internal sealed class CreateChunkingReportPipe : IChunkingPipe
 {
     public Task<ChunkingReport> Invoke(
         ChunkingContext context,

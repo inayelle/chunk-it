@@ -4,7 +4,7 @@ using ChunkIt.Hashing;
 
 namespace ChunkIt.Sandbox.Chunking;
 
-internal sealed class CreateChunksPipe : IChunkingPipe
+internal sealed class ExecuteChunkingPipe : IChunkingPipe
 {
     private const int Kilobyte = 1024;
     private const int BufferSize = Kilobyte * 1000 * 4;

@@ -11,7 +11,7 @@ internal sealed class ChunkingPipeline
     {
         var builder = new AsyncPipelineBuilder<ChunkingContext, ChunkingReport>();
 
-        builder.UsePipe(new CreateChunksPipe().Invoke);
+        builder.UsePipe(new ExecuteChunkingPipe().Invoke);
         builder.UsePipe(new ValidateChunksPipe().Invoke);
         builder.UsePipe(new CalculateFileSizePipe().Invoke);
         builder.UsePipe(new CalculateIndexSizePipe().Invoke);
@@ -22,7 +22,7 @@ internal sealed class ChunkingPipeline
             builder.UsePipe(new WriteChunksPipe().Invoke);
         }
 
-        builder.UsePipe(new CreateSummaryPipe().Invoke);
+        builder.UsePipe(new CreateChunkingReportPipe().Invoke);
 
         _pipeline = builder.Build();
     }
