@@ -19,6 +19,7 @@ public sealed class SourceFile : IEquatable<SourceFile>
 
     public FileStream OpenFileStream(
         int bufferSize = 4096,
+        FileShare share = FileShare.None,
         FileOptions options = FileOptions.SequentialScan
     )
     {
@@ -26,7 +27,7 @@ public sealed class SourceFile : IEquatable<SourceFile>
             Path,
             FileMode.Open,
             FileAccess.Read,
-            FileShare.Read,
+            share,
             bufferSize,
             options
         );
