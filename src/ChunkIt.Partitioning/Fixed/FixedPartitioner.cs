@@ -8,6 +8,7 @@ public class FixedPartitioner : IPartitioner
     private readonly int _chunkSize;
 
     public int MinimumChunkSize => _chunkSize;
+    public int AverageChunkSize => _chunkSize;
     public int MaximumChunkSize => _chunkSize;
 
     public FixedPartitioner(int chunkSize)

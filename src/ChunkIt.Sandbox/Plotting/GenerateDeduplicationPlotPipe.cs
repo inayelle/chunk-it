@@ -61,7 +61,7 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
                 Value = report.SavedRatio,
                 FillColor = PlotColors.ForIndex(index),
                 LineColor = PlotColors.ForIndex(index),
-                Label = $"{report.SavedBytes.ToHumanReadableSize()} ({report.SavedRatio:F2}%)",
+                Label = $"{report.SavedBytes.ToHumanReadableSize()} ({report.SavedRatio * 100:F2}%)",
             };
 
             var barPlot = plot.Add.Bar(bar);
@@ -90,7 +90,7 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
                 Value = report.IndexRatio,
                 FillColor = PlotColors.ForIndex(index),
                 LineColor = PlotColors.ForIndex(index),
-                Label = $"{report.IndexBytes.ToHumanReadableSize()} ({report.IndexRatio:F2}%)",
+                Label = $"{report.IndexBytes.ToHumanReadableSize()} ({report.IndexRatio * 100:F2}%)",
             };
 
             plot.Add.Bar(bar);

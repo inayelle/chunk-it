@@ -44,7 +44,8 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         var histogram = CreateHistogram(report);
 
         plot.Add.Histogram(histogram, PlotColors.ForIndex(index));
-        plot.Add.Annotation($"Total chunks: {report.Chunks.Count}");
+        plot.Add.Annotation($"Total chunks: {report.Chunks.Count}", alignment: Alignment.UpperLeft);
+        plot.Add.Annotation($"Quality ratio: {report.QualityRatio * 100:F2}%", alignment: Alignment.LowerLeft);
 
         return plot;
     }
@@ -79,7 +80,7 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         var sb = new StringBuilder();
 
         sb.AppendLine($"RunId: {SandboxRuntime.Instance.RunId:000}");
-        sb.AppendLine($"{report.SourceFile.Name} ({report.OriginalFileSize.ToHumanReadableSize()})");
+        sb.AppendLine($"{report.SourceFile.Name} ({report.SourceFile.Size.ToHumanReadableSize()})");
         sb.Append(report.Partitioner);
 
         return sb.ToString();

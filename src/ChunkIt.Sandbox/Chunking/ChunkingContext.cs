@@ -17,9 +17,13 @@ internal sealed class ChunkingContext
 
     public IReadOnlyList<Chunk> Chunks => _chunks;
 
-    public ChunkingContext(IPartitioner partitioner, SourceFile sourceFile, OnProgressChanged onProgressChanged)
+    public ChunkingContext(
+        IPartitioner partitioner,
+        SourceFile sourceFile,
+        OnProgressChanged onProgressChanged
+    )
     {
-        _chunks = new List<Chunk>(capacity: 100_000);
+        _chunks = new List<Chunk>(capacity: 1_000_000);
         _onProgressChanged = onProgressChanged;
 
         Partitioner = partitioner;

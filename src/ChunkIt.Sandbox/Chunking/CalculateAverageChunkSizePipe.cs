@@ -12,7 +12,6 @@ internal sealed class CalculateAverageChunkSizePipe : IChunkingPipe
         var report = await next(context);
 
         var averageChunkSize = context.Chunks.Average(chunk => chunk.Length);
-
         report.AverageChunkSize = (int)Math.Ceiling(averageChunkSize);
 
         return report;

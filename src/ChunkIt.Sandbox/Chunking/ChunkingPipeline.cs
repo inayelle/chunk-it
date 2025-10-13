@@ -14,10 +14,10 @@ internal sealed class ChunkingPipeline
         builder
             .UsePipe<ExecuteChunkingPipe>()
             .UsePipe<ValidateChunksPipe>()
-            .UsePipe<CalculateAverageChunkSizePipe>()
-            .UsePipe<CalculateFileSizePipe>()
+            .UsePipe<CalculateChunkingQualityPipe>()
             .UsePipe<CalculateIndexSizePipe>()
-            .UsePipe<CalculateDuplicatesPipe>();
+            .UsePipe<CalculateFileSizePipe>()
+            .UsePipe<CalculateAverageChunkSizePipe>();
 
         if (RuntimeFeature.IsDynamicCodeSupported)
         {
