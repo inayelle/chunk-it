@@ -6,11 +6,9 @@ namespace ChunkIt.Sandbox.Chunking;
 
 internal sealed class CalculateIndexSizePipe : IChunkingPipe
 {
-    private const long FileIdSize = sizeof(long);
-    private const long ChunkIdSize = sizeof(long);
+    private const long FileIdSize = 16; // sizeof(Guid)
     private const long OffsetSize = sizeof(long);
     private const long LengthSize = sizeof(int);
-    private const long HashSize = 32;
 
     public async Task<ChunkingReport> Invoke(
         ChunkingContext context,
@@ -19,12 +17,22 @@ internal sealed class CalculateIndexSizePipe : IChunkingPipe
     {
         var report = await next(context);
 
-        var uniqueChunksCount = context
+        var uniqueEntries = context
             .Chunks
-            .DistinctBy(chunk => chunk.Hash, ByteArrayEqualityComparer.Instance)
-            .LongCount();
+            .GroupBy(
+                chunk => chunk.Hash,
+                (hash, chunks) => new
+                {
+                    HashSize = hash.Length * sizeof(byte),
+                    ChunksCount = chunks.Count(),
+                },
+                ByteArrayEqualityComparer.Instance
+            )
+            .ToArray();
 
-        var indexBytes = (FileIdSize + ChunkIdSize + OffsetSize + LengthSize + HashSize) * uniqueChunksCount;
+        var indexBytes = (FileIdSize + LengthSize) * uniqueEntries.Length +
+                         uniqueEntries.Sum(entry => entry.HashSize + OffsetSize * entry.ChunksCount);
+
         var indexRatio = indexBytes / (float)context.SourceFile.Size * 100;
 
         report.IndexBytes = indexBytes;
