@@ -52,18 +52,10 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
 
     private static Histogram CreateHistogram(ChunkingReport report)
     {
-        var minimumChunkLength = report.Chunks.Min(chunk => chunk.Length);
-        var maximumChunkLength = report.Chunks.Max(chunk => chunk.Length);
-
-        if (minimumChunkLength == maximumChunkLength)
-        {
-            minimumChunkLength = 0;
-        }
-
         var histogram = Histogram.WithBinSize(
-            binSize: 256,
-            firstBin: minimumChunkLength,
-            lastBin: maximumChunkLength
+            binSize: 512,
+            firstBin: 0,
+            lastBin: report.Chunks.Max(chunk => chunk.Length)
         );
 
         var values = report
