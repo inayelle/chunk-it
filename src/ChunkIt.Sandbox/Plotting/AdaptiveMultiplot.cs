@@ -17,20 +17,6 @@ internal sealed class AdaptiveMultiplot : Multiplot
         Subplots.RemoveAt(0);
     }
 
-    public static AdaptiveMultiplot FromColumns(int columns, int totalCount)
-    {
-        var rows = (int)Math.Ceiling(totalCount / (double)columns);
-
-        return new AdaptiveMultiplot(rows, columns);
-    }
-
-    public static AdaptiveMultiplot FromRows(int rows, int totalCount)
-    {
-        var columns = (int)Math.Ceiling(totalCount / (double)rows);
-
-        return new AdaptiveMultiplot(rows, columns);
-    }
-
     public void Save(string path, int extraWidth = 0, int extraHeight = 0)
     {
         var plotWidth = 700 * Columns + extraWidth;
