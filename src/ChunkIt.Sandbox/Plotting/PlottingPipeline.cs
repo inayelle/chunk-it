@@ -8,10 +8,11 @@ internal sealed class PlottingPipeline
 
     public PlottingPipeline()
     {
-        var builder = new AsyncPipelineBuilder<PlottingContext>();
+        var builder = new PlottingPipelineBuilder();
 
-        builder.UsePipe(new GenerateDistributionPlotPipe().Invoke);
-        builder.UsePipe(new GenerateDeduplicationPlotPipe().Invoke);
+        builder
+            .UsePipe<GenerateDistributionPlotPipe>()
+            .UsePipe<GenerateDeduplicationPlotPipe>();
 
         _pipeline = builder.Build();
     }
@@ -19,5 +20,18 @@ internal sealed class PlottingPipeline
     public Task Invoke(PlottingContext context)
     {
         return _pipeline.Invoke(context);
+    }
+}
+
+file sealed class PlottingPipelineBuilder : AsyncPipelineBuilder<PlottingContext>
+{
+    public PlottingPipelineBuilder UsePipe<TPipe>()
+        where TPipe : IPlottingPipe, new()
+    {
+        var pipe = new TPipe();
+
+        base.UsePipe(pipe.Invoke);
+
+        return this;
     }
 }
