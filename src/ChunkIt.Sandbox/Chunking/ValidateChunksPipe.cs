@@ -4,7 +4,7 @@ namespace ChunkIt.Sandbox.Chunking;
 
 internal sealed class ValidateChunksPipe : IChunkingPipe
 {
-    public async Task<ChunkingReport> Invoke(
+    public Task<ChunkingReport> Invoke(
         ChunkingContext context,
         AsyncPipeline<ChunkingContext, ChunkingReport> next
     )
@@ -12,11 +12,11 @@ internal sealed class ValidateChunksPipe : IChunkingPipe
         var expectedFileSize = context.SourceFile.Size;
         var actualFileSize = context.Chunks.Sum(chunk => (long)chunk.Length);
 
-        var isValid = expectedFileSize == actualFileSize;
+        if (expectedFileSize != actualFileSize)
+        {
+            throw new ApplicationException("Total chunks size doesn't match the original source file size.");
+        }
 
-        var report = await next(context);
-        report.IsValid = isValid;
-
-        return report;
+        return next(context);
     }
 }

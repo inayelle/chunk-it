@@ -1,3 +1,4 @@
+using ChunkIt.Common.Abstractions;
 using ChunkIt.Sandbox.Chunking;
 using ChunkIt.Sandbox.Plotting;
 
@@ -5,6 +6,9 @@ namespace ChunkIt.Sandbox.Controllers;
 
 internal sealed class ChunkingController : IController
 {
+    private readonly ChunkingPipeline _chunkingPipeline = new();
+    private readonly PlottingPipeline _plottingPipeline = new();
+
     public async Task Run()
     {
         using var _ = SandboxRuntime.Instance;
@@ -12,10 +16,8 @@ internal sealed class ChunkingController : IController
         await RunCore();
     }
 
-    private static async Task RunCore()
+    private async Task RunCore()
     {
-        var chunkingPipeline = new ChunkingPipeline();
-        var plottingPipeline = new PlottingPipeline();
         var chunkingReports = new List<ChunkingReport>();
 
         foreach (var sourceFile in SourceFiles.Values)
@@ -26,37 +28,41 @@ internal sealed class ChunkingController : IController
             {
                 Console.Write($"    - {partitioner}: ");
 
-                var chunkingContext = new ChunkingContext(partitioner, sourceFile, ReportProgress);
-
-                var chunkingReport = await chunkingPipeline.Invoke(chunkingContext);
-
-                if (chunkingReport is not { IsValid: true })
+                try
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(
-                        $" error: partitioner yielded invalid chunks. " +
-                        $"Expected size: {chunkingReport.SourceFile.Size}, " +
-                        $"actual size: {chunkingReport.Chunks.Sum(chunk => (long)chunk.Length)}"
-                    );
-                    Console.ResetColor();
+                    var chunkingReport = await ExecuteChunking(partitioner, sourceFile);
+
+                    chunkingReports.Add(chunkingReport);
+
+                    Console.WriteLine($" completed! Elapsed {chunkingReport.Elapsed.TotalMilliseconds} ms.");
                 }
-
-                chunkingReports.Add(chunkingReport);
-
-                Console.WriteLine($" elapsed: {chunkingReport.Elapsed.TotalMilliseconds} ms.");
+                catch (Exception exception)
+                {
+                    Console.WriteLine($" failed! {exception}.");
+                }
             }
 
             Console.WriteLine();
         }
 
-        var plottingContext = new PlottingContext(
-            chunkingReports
-        );
-
-        await plottingPipeline.Invoke(plottingContext);
+        await ExecutePlotting(chunkingReports);
     }
 
-    private static void ReportProgress(int progress)
+    private Task<ChunkingReport> ExecuteChunking(IPartitioner partitioner, SourceFile sourceFile)
+    {
+        var chunkingContext = new ChunkingContext(partitioner, sourceFile, DisplayChunkingProgress);
+
+        return _chunkingPipeline.Invoke(chunkingContext);
+    }
+
+    private Task ExecutePlotting(IReadOnlyList<ChunkingReport> chunkingReports)
+    {
+        var plottingContext = new PlottingContext(chunkingReports);
+
+        return _plottingPipeline.Invoke(plottingContext);
+    }
+
+    private static void DisplayChunkingProgress(int progress)
     {
         var report = progress switch
         {

@@ -10,8 +10,6 @@ internal sealed class ChunkingReport
 
     public TimeSpan Elapsed { get; set; }
 
-    public bool IsValid { get; set; }
-
     public int AverageChunkSize { get; set; }
 
     public int DistinctChunkHashes { get; set; }
