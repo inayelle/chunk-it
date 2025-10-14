@@ -62,9 +62,16 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
                 FillColor = PlotColors.ForIndex(index),
                 LineColor = PlotColors.ForIndex(index),
                 Label = $"{report.SavedBytes.ToHumanReadableSize()} ({report.SavedRatio * 100:F2}%)",
+                CenterLabel = true,
             };
 
             var barPlot = plot.Add.Bar(bar);
+            barPlot.ValueLabelStyle = new LabelStyle
+            {
+                Alignment = Alignment.LowerCenter,
+                Rotation = 90,
+                Bold = true,
+            };
             barPlot.LegendText = report.Partitioner.ToString()!;
         }
 
