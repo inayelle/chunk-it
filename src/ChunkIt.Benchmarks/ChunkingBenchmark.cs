@@ -5,6 +5,7 @@ using ChunkIt.Hashing;
 using ChunkIt.Partitioning.AsymmetricExtremum;
 using ChunkIt.Partitioning.Fixed;
 using ChunkIt.Partitioning.Gear;
+using ChunkIt.Partitioning.Gear.Table;
 using ChunkIt.Partitioning.Rabin;
 using ChunkIt.Partitioning.RapidAsymmetricMaximum;
 

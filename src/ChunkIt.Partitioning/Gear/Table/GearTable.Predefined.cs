@@ -1,72 +1,46 @@
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using ChunkIt.Common.Extensions;
 
-namespace ChunkIt.Partitioning.Gear;
+namespace ChunkIt.Partitioning.Gear.Table;
 
-public sealed class GearTable
+public sealed partial class GearTable
 {
-    private readonly ulong[] _table;
-
-    internal GearTable(ulong[] table)
+    public static GearTable Predefined(int variantIndex = 0, int rotations = 0)
     {
-        _table = table;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Fingerprint(ref ulong fingerprint, ref readonly byte value)
-    {
-        unchecked
+        if (variantIndex < 0 || variantIndex >= Variants.Tables.Count)
         {
-            fingerprint = (fingerprint << 1) + _table[value];
+            throw new ArgumentOutOfRangeException(nameof(variantIndex), "Variant index is out of range.");
         }
-    }
 
-    public static GearTable Random(Random random)
-    {
-        var seed = random.NextUInt64();
+        var targetTable = Variants.Tables[variantIndex];
 
-        return RandomGearTable.Create(seed);
-    }
+        var table = new ulong[targetTable.Length];
 
-    public static GearTable Predefined(int rotations, int tableIndex = 0)
-    {
-        return PredefinedGearTable.Create(rotations, tableIndex);
-    }
-}
-
-file static class RandomGearTable
-{
-    public static GearTable Create(ulong seed)
-    {
-        var table = new ulong[256];
-
-        for (var i = 0; i < table.Length; i++)
+        if (rotations is < 0 or > 63)
         {
-            table[i] = SplitMix64(ref seed);
+            throw new ArgumentException("Rotations must be in range [0; 63].", nameof(rotations));
+        }
+
+        for (var index = 0; index < table.Length; index++)
+        {
+            table[index] = BitOperations.RotateRight(targetTable[index], rotations);
         }
 
         return new GearTable(table);
     }
-
-    private static ulong SplitMix64(ref ulong seed)
-    {
-        unchecked
-        {
-            seed += 0x9E3779B97F4A7C15UL;
-
-            var z = seed;
-            z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL;
-            z = (z ^ (z >> 27)) * 0x94D049BB133111EBUL;
-
-            return z ^ (z >> 31);
-        }
-    }
 }
 
-file static class PredefinedGearTable
+file static class Variants
 {
-    private static readonly ulong[] Table0 =
+    public static readonly IReadOnlyList<ulong[]> Tables =
+    [
+        Variant0.Table,
+        Variant1.Table,
+    ];
+}
+
+file static class Variant0
+{
+    public static readonly ulong[] Table =
     [
         0x651748f5a15f8222, 0xd6eda276c877d8ea, 0x66896ef9591b326b,
         0xcd97506b21370a12, 0x8c9c5c9acbeb2a05, 0xb8b9553ee17665ef,
@@ -155,8 +129,11 @@ file static class PredefinedGearTable
         0x8a3a1a4d3de036b7, 0xdf3c5c0c017232a4, 0x8e60e63156990620,
         0xd31b4b03145f02fa,
     ];
+}
 
-    private static readonly ulong[] Table1 =
+file static class Variant1
+{
+    public static readonly ulong[] Table =
     [
         0xd1a16514dc206650, 0x4ddab180952e6a74, 0x7ed1d26a9f4a2d9b,
         0x2cc94adb288d1aec, 0x4339166e5035ca2e, 0xab9091be05d6f529,
@@ -245,34 +222,4 @@ file static class PredefinedGearTable
         0x39cdeba6743f033a, 0x409adf6a28300f82, 0x4bc5012751032c2f,
         0x08c956ac24d7ba44,
     ];
-
-    private static readonly IReadOnlyList<ulong[]> Tables =
-    [
-        Table0,
-        Table1,
-    ];
-
-    public static GearTable Create(int rotations, int tableIndex)
-    {
-        if (tableIndex < 0 || tableIndex >= Tables.Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(tableIndex), "Table index is out of range.");
-        }
-
-        var targetTable = Tables[tableIndex];
-
-        var table = new ulong[targetTable.Length];
-
-        if (rotations is < 0 or > 63)
-        {
-            throw new ArgumentException("Rotations must be in range [0; 63].", nameof(rotations));
-        }
-
-        for (var index = 0; index < table.Length; index++)
-        {
-            table[index] = BitOperations.RotateRight(targetTable[index], rotations);
-        }
-
-        return new GearTable(table);
-    }
 }

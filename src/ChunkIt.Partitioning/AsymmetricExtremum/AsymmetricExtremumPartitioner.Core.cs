@@ -1,9 +1,10 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.AsymmetricExtremum;
 
-public sealed class AsymmetricExtremumPartitioner : IPartitioner
+public sealed partial class AsymmetricExtremumPartitioner
+    : IPartitioner,
+      IEquatable<AsymmetricExtremumPartitioner>
 {
     private readonly int _windowSize;
 
@@ -56,17 +57,5 @@ public sealed class AsymmetricExtremumPartitioner : IPartitioner
         }
 
         return buffer.Length;
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("asymmetric-extremum");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .Build();
     }
 }

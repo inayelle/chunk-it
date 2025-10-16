@@ -1,9 +1,10 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Sequential;
 
-public sealed class SequentialPartitioner : IPartitioner
+public sealed partial class SequentialPartitioner
+    : IPartitioner,
+      IEquatable<SequentialPartitioner>
 {
     private delegate bool Comparator(byte previousByte, byte currentByte);
 
@@ -92,26 +93,5 @@ public sealed class SequentialPartitioner : IPartitioner
         }
 
         return buffer.Length;
-    }
-
-    public override string ToString()
-    {
-        var modeString = _mode switch
-        {
-            SequentialPartitionerMode.Increasing => "incr",
-            SequentialPartitionerMode.Decreasing => "decr",
-            _ => throw new ArgumentOutOfRangeException(nameof(_mode)),
-        };
-
-        var builder = new DescriptionBuilder($"seq-{modeString}");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("seqLen", _sequenceLength)
-            .AddParameter("skipTrig", _skipTrigger)
-            .AddParameter("skipLen", _skipLength)
-            .Build();
     }
 }

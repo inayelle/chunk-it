@@ -1,9 +1,11 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
+using ChunkIt.Partitioning.Gear.Table;
 
 namespace ChunkIt.Partitioning.Gear;
 
-public sealed class TwinPartitioner : IPartitioner
+public sealed partial class TwinPartitioner
+    : IPartitioner,
+      IEquatable<TwinPartitioner>
 {
     private readonly GearTable _leftGearTable;
     private readonly GearTable _rightGearTable;
@@ -138,19 +140,5 @@ public sealed class TwinPartitioner : IPartitioner
         var mask = (1UL << k) - 1;
 
         return mask;
-    }
-
-    public override string ToString()
-    {
-        var gearMode = _leftGearTable == _rightGearTable ? "mono" : "duo";
-
-        var builder = new DescriptionBuilder($"twin-{gearMode}");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("norm_level", _normalizationLevel)
-            .Build();
     }
 }

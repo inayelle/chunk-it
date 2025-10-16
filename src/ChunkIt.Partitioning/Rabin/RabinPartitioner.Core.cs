@@ -1,9 +1,10 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Rabin;
 
-public sealed class RabinPartitioner : IPartitioner
+public sealed partial class RabinPartitioner
+    : IPartitioner,
+      IEquatable<RabinPartitioner>
 {
     private const ulong Prime = 153_191UL;
     private const ulong Mask = 0x00FF_FFFF_FFFFUL;
@@ -63,7 +64,7 @@ public sealed class RabinPartitioner : IPartitioner
         AverageChunkSize = averageChunkSize;
         MaximumChunkSize = maximumChunkSize;
 
-        _winSlidePos = MinimumChunkSize - WindowSlideOffset;
+        _winSlidePos = minimumChunkSize - WindowSlideOffset;
         _cutMask = (ulong)(averageChunkSize - minimumChunkSize - 1);
     }
 
@@ -116,18 +117,5 @@ public sealed class RabinPartitioner : IPartitioner
         }
 
         return buffer.Length;
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("rabin");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", WindowSize)
-            .AddParameter("cut_mask", _cutMask)
-            .Build();
     }
 }

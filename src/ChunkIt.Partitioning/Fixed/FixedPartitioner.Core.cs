@@ -1,9 +1,10 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Fixed;
 
-public sealed class FixedPartitioner : IPartitioner
+public sealed partial class FixedPartitioner
+    : IPartitioner,
+      IEquatable<FixedPartitioner>
 {
     private readonly int _chunkSize;
 
@@ -21,14 +22,5 @@ public sealed class FixedPartitioner : IPartitioner
         return buffer.Length < _chunkSize
             ? buffer.Length
             : _chunkSize;
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("fixed");
-
-        return builder
-            .AddParameter("size", _chunkSize)
-            .Build();
     }
 }

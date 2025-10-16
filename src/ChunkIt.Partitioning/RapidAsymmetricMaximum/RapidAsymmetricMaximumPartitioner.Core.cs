@@ -1,9 +1,10 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.RapidAsymmetricMaximum;
 
-public sealed class RapidAsymmetricMaximumPartitioner : IPartitioner
+public sealed partial class RapidAsymmetricMaximumPartitioner
+    : IPartitioner,
+      IEquatable<RapidAsymmetricMaximumPartitioner>
 {
     private readonly int _windowSize;
 
@@ -57,17 +58,5 @@ public sealed class RapidAsymmetricMaximumPartitioner : IPartitioner
         }
 
         return cursor;
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("rapid-asymmetric-maximum");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("window", _windowSize)
-            .Build();
     }
 }

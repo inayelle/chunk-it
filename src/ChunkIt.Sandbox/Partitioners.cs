@@ -2,6 +2,7 @@ using ChunkIt.Common.Abstractions;
 using ChunkIt.Partitioning.AsymmetricExtremum;
 using ChunkIt.Partitioning.Fixed;
 using ChunkIt.Partitioning.Gear;
+using ChunkIt.Partitioning.Gear.Table;
 using ChunkIt.Partitioning.Rabin;
 using ChunkIt.Partitioning.RapidAsymmetricMaximum;
 using ChunkIt.Partitioning.Sequential;
@@ -40,7 +41,7 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            gearTable: GearTable.Predefined(rotations: 0, tableIndex: 0)
+            gearTable: GearTable.Predefined(variantIndex: 0, rotations: 0)
         );
 
         yield return new TwinPartitioner(
@@ -48,7 +49,7 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            gearTable: GearTable.Predefined(rotations: 0, tableIndex: 0)
+            gearTable: GearTable.Predefined(variantIndex: 0, rotations: 0)
         );
 
         yield return new TwinPartitioner(
@@ -56,8 +57,8 @@ internal static class Partitioners
             averageChunkSize: AverageChunkSize,
             maximumChunkSize: MaximumChunkSize,
             normalizationLevel: 3,
-            leftGearTable: GearTable.Predefined(rotations: 0, tableIndex: 0),
-            rightGearTable: GearTable.Predefined(rotations: 0, tableIndex: 1)
+            leftGearTable: GearTable.Predefined(variantIndex: 0, rotations: 0),
+            rightGearTable: GearTable.Predefined(variantIndex: 1, rotations: 0)
         );
 
         yield return new RapidAsymmetricMaximumPartitioner(

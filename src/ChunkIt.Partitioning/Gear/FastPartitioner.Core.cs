@@ -1,9 +1,11 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
+using ChunkIt.Partitioning.Gear.Table;
 
 namespace ChunkIt.Partitioning.Gear;
 
-public sealed class FastPartitioner : IPartitioner
+public sealed partial class FastPartitioner
+    : IPartitioner,
+      IEquatable<FastPartitioner>
 {
     private readonly GearTable _gearTable;
 
@@ -85,17 +87,5 @@ public sealed class FastPartitioner : IPartitioner
         var laxMask = (1UL << kLax) - 1;
 
         return (strictMask, laxMask);
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("fast");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .AddParameter("norm_level", _normalizationLevel)
-            .Build();
     }
 }

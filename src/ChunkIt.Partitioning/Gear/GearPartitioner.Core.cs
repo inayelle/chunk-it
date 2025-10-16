@@ -1,9 +1,11 @@
-using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
+using ChunkIt.Partitioning.Gear.Table;
 
 namespace ChunkIt.Partitioning.Gear;
 
-public sealed class GearPartitioner : IPartitioner
+public sealed partial class GearPartitioner
+    : IPartitioner,
+      IEquatable<GearPartitioner>
 {
     private readonly GearTable _gearTable;
 
@@ -63,16 +65,5 @@ public sealed class GearPartitioner : IPartitioner
         var mask = (1UL << k) - 1;
 
         return mask;
-    }
-
-    public override string ToString()
-    {
-        var builder = new DescriptionBuilder("gear");
-
-        return builder
-            .AddParameter("min", MinimumChunkSize)
-            .AddParameter("avg", AverageChunkSize)
-            .AddParameter("max", MaximumChunkSize)
-            .Build();
     }
 }
