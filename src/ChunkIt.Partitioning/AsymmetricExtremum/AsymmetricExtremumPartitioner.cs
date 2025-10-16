@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.AsymmetricExtremum;
 
-public class AsymmetricExtremumPartitioner : IPartitioner
+public sealed class AsymmetricExtremumPartitioner : IPartitioner
 {
     private readonly int _windowSize;
 

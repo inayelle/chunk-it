@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Rabin;
 
-public class RabinPartitioner : IPartitioner
+public sealed class RabinPartitioner : IPartitioner
 {
     private const ulong Prime = 153_191UL;
     private const ulong Mask = 0x00FF_FFFF_FFFFUL;

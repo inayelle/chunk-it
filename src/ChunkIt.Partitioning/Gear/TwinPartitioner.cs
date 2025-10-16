@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Gear;
 
-public class TwinPartitioner : IPartitioner
+public sealed class TwinPartitioner : IPartitioner
 {
     private readonly GearTable _leftGearTable;
     private readonly GearTable _rightGearTable;

@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.RapidAsymmetricMaximum;
 
-public class RapidAsymmetricMaximumPartitioner : IPartitioner
+public sealed class RapidAsymmetricMaximumPartitioner : IPartitioner
 {
     private readonly int _windowSize;
 

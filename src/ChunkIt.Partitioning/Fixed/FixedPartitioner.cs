@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Fixed;
 
-public class FixedPartitioner : IPartitioner
+public sealed class FixedPartitioner : IPartitioner
 {
     private readonly int _chunkSize;
 

@@ -3,7 +3,7 @@ using ChunkIt.Common.Abstractions;
 
 namespace ChunkIt.Partitioning.Sequential;
 
-public class SequentialPartitioner : IPartitioner
+public sealed class SequentialPartitioner : IPartitioner
 {
     private delegate bool Comparator(byte previousByte, byte currentByte);
 
