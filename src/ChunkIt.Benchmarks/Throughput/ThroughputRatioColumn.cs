@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using ChunkIt.Benchmarks.Extensions;
 
 namespace ChunkIt.Benchmarks.Throughput;
 
@@ -20,22 +21,19 @@ internal sealed class ThroughputRatioColumn : IColumn
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
     {
-        var currentSourceFile = benchmarkCase.GetSourceFile();
+        var result = ChunkingBenchmarkResult.FromBenchmark(benchmarkCase, summary);
 
         var baseline = summary
-            .BenchmarksCases
-            .Where(benchmark => benchmark.GetSourceFile().Equals(currentSourceFile))
-            .MaxBy(summary.GetThroughput);
+            .GetBenchmarkResults()
+            .Where(static result => result.SourceFile.Equals(result.SourceFile))
+            .MaxBy(static result => result.Throughput);
 
-        if (baseline == benchmarkCase)
+        if (result.Equals(baseline))
         {
             return "1.00";
         }
 
-        var baselineThroughput = summary.GetThroughput(baseline);
-        var currentThroughput = summary.GetThroughput(benchmarkCase);
-
-        var ratio = currentThroughput / baselineThroughput;
+        var ratio = result.Throughput / baseline.Throughput;
 
         return $"{ratio:F2}";
     }

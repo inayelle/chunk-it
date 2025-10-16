@@ -13,7 +13,9 @@ internal sealed class ThroughputOrderer : DefaultOrderer
     )
     {
         return benchmarksCases
-            .OrderBy(benchmark => benchmark.GetSourceFile().Size)
-            .ThenByDescending(summary.GetThroughput);
+            .Select(benchmark => ChunkingBenchmarkResult.FromBenchmark(benchmark, summary))
+            .OrderBy(result => result.SourceFile.Size)
+            .ThenByDescending(result => result.Throughput)
+            .Select(result => result.Benchmark);
     }
 }

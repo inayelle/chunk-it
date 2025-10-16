@@ -20,7 +20,9 @@ internal sealed class ThroughputColumn : IColumn
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
     {
-        return summary.GetThroughputText(benchmarkCase);
+        var result = ChunkingBenchmarkResult.FromBenchmark(benchmarkCase, summary);
+
+        return result.ThroughputText();
     }
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style)

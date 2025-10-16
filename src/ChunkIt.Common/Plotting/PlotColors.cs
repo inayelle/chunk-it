@@ -1,8 +1,8 @@
 using ScottPlot;
 
-namespace ChunkIt.Sandbox.Plotting;
+namespace ChunkIt.Common.Plotting;
 
-internal static class PlotColors
+public static class PlotColors
 {
     private static readonly IReadOnlyList<Color> Colors =
     [

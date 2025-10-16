@@ -2,7 +2,9 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Reports;
+using ChunkIt.Benchmarks.Exporters;
 using ChunkIt.Benchmarks.Throughput;
+using Perfolizer.Horology;
 
 namespace ChunkIt.Benchmarks;
 
@@ -25,9 +27,10 @@ public sealed class ChunkingBenchmarkConfig : ManualConfig
             .Default
             .WithGcServer(false)
             .WithGcConcurrent(false)
-            .WithMinIterationCount(25)
-            .WithInvocationCount(1)
+            .WithMinIterationTime(TimeInterval.FromMilliseconds(300))
             .WithUnrollFactor(1)
         );
+
+        AddExporter(new ScottPlotMeanExporter());
     }
 }
