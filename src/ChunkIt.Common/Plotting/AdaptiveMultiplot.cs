@@ -1,9 +1,9 @@
 using ScottPlot;
 using ScottPlot.MultiplotLayouts;
 
-namespace ChunkIt.Sandbox.Plotting;
+namespace ChunkIt.Common.Plotting;
 
-internal sealed class AdaptiveMultiplot : Multiplot
+public sealed class AdaptiveMultiplot : Multiplot
 {
     public int Columns { get; }
     public int Rows { get; }
@@ -23,7 +23,7 @@ internal sealed class AdaptiveMultiplot : Multiplot
         var plotHeight = 500 * Rows + extraHeight;
 
         this.SavePng(
-            Path.Combine(path),
+            path,
             plotWidth,
             plotHeight
         );

@@ -27,7 +27,6 @@
 
     <ItemGroup>
         <PackageReference Include="Tababular"/>
-        <PackageReference Include="ScottPlot"/>
         <PackageReference Include="AnyKit.Pipelines"/>
         <PackageReference Include="System.Linq.Async"/>
     </ItemGroup>

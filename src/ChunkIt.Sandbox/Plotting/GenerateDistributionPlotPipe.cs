@@ -1,6 +1,7 @@
 using System.Text;
 using AnyKit.Pipelines;
 using ChunkIt.Common.Extensions;
+using ChunkIt.Common.Plotting;
 using ScottPlot;
 using ScottPlot.Statistics;
 

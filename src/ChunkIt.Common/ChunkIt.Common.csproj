@@ -4,4 +4,8 @@
         <OutputType>library</OutputType>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="ScottPlot"/>
+    </ItemGroup>
+
 </Project>
