@@ -1,7 +1,6 @@
-using System.Text;
 using AnyKit.Pipelines;
-using ChunkIt.Common.Extensions;
 using ChunkIt.Common.Plotting;
+using ChunkIt.Sandbox.Extensions;
 using ScottPlot;
 using ScottPlot.Statistics;
 
@@ -38,7 +37,7 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
     {
         var plot = new Plot();
 
-        plot.Title(GenerateReportTitle(report));
+        plot.Title(report.SourceFile.ToPlotTitle(report.Partitioner));
         plot.XLabel("Chunk size");
         plot.YLabel("Chunks count");
 
@@ -46,7 +45,6 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
 
         plot.Add.Histogram(histogram, PlotColors.ForIndex(index));
         plot.Add.Annotation($"Total chunks: {report.Chunks.Count}", alignment: Alignment.UpperLeft);
-        plot.Add.Annotation($"Quality ratio: {report.QualityRatio * 100:F2}%", alignment: Alignment.LowerLeft);
 
         return plot;
     }
@@ -66,16 +64,5 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         histogram.AddRange(values);
 
         return histogram;
-    }
-
-    private static string GenerateReportTitle(ChunkingReport report)
-    {
-        var sb = new StringBuilder();
-
-        sb.AppendLine($"RunId: {SandboxRuntime.Instance.RunId:000}");
-        sb.AppendLine($"{report.SourceFile.Name} ({report.SourceFile.Size.ToHumanReadableSize()})");
-        sb.Append(report.Partitioner);
-
-        return sb.ToString();
     }
 }

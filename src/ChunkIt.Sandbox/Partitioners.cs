@@ -3,7 +3,6 @@ using ChunkIt.Partitioning.AsymmetricExtremum;
 using ChunkIt.Partitioning.Fixed;
 using ChunkIt.Partitioning.Gear;
 using ChunkIt.Partitioning.Gear.Table;
-using ChunkIt.Partitioning.Rabin;
 using ChunkIt.Partitioning.RapidAsymmetricMaximum;
 using ChunkIt.Partitioning.Sequential;
 
@@ -23,18 +22,18 @@ internal static class Partitioners
     {
         yield return new FixedPartitioner(chunkSize: AverageChunkSize);
 
-        yield return new RabinPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize
-        );
-
-        yield return new GearPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            gearTable: GearTable.Predefined(rotations: 0)
-        );
+        // yield return new RabinPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize
+        // );
+        //
+        // yield return new GearPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     gearTable: GearTable.Predefined(rotations: 0)
+        // );
 
         yield return new FastPartitioner(
             minimumChunkSize: MinimumChunkSize,
@@ -44,13 +43,13 @@ internal static class Partitioners
             gearTable: GearTable.Predefined(variantIndex: 0, rotations: 0)
         );
 
-        yield return new TwinPartitioner(
-            minimumChunkSize: MinimumChunkSize,
-            averageChunkSize: AverageChunkSize,
-            maximumChunkSize: MaximumChunkSize,
-            normalizationLevel: 3,
-            gearTable: GearTable.Predefined(variantIndex: 0, rotations: 0)
-        );
+        // yield return new TwinPartitioner(
+        //     minimumChunkSize: MinimumChunkSize,
+        //     averageChunkSize: AverageChunkSize,
+        //     maximumChunkSize: MaximumChunkSize,
+        //     normalizationLevel: 3,
+        //     gearTable: GearTable.Predefined(variantIndex: 0, rotations: 0)
+        // );
 
         yield return new TwinPartitioner(
             minimumChunkSize: MinimumChunkSize,

@@ -13,7 +13,8 @@ internal sealed class PlottingPipeline
         builder
             .UsePipe<GenerateDistributionPlotPipe>()
             .UsePipe<GenerateDeduplicationPlotPipe>()
-            .UsePipe<GenerateQualityPlotPipe>();
+            .UsePipe<GenerateQualityPlotPipe>()
+            .UsePipe<GenerateVariancePlotPipe>();
 
         _pipeline = builder.Build();
     }

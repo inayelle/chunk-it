@@ -7,7 +7,7 @@ using ScottPlot.TickGenerators;
 
 namespace ChunkIt.Sandbox.Plotting;
 
-internal sealed class GenerateQualityPlotPipe : IPlottingPipe
+internal sealed class GenerateVariancePlotPipe : IPlottingPipe
 {
     public Task Invoke(PlottingContext context, AsyncPipeline<PlottingContext> next)
     {
@@ -31,7 +31,7 @@ internal sealed class GenerateQualityPlotPipe : IPlottingPipe
             multiplot.AddPlot(qualityPlot);
         }
 
-        var plotPath = SandboxRuntime.Instance.GetPlotFilePath("quality");
+        var plotPath = SandboxRuntime.Instance.GetPlotFilePath("variance");
         multiplot.Save(plotPath, extraWidth: 500, extraHeight: 500);
 
         return next(context);
@@ -46,7 +46,7 @@ internal sealed class GenerateQualityPlotPipe : IPlottingPipe
 
         foreach (var (index, report) in reports.Index())
         {
-            var bar = new QualityBar(report, index);
+            var bar = new VarianceBar(report, index);
 
             var barPlot = plot.Add.Bar(bar);
             barPlot.LegendText = report.Partitioner.ToString()!;
@@ -61,7 +61,7 @@ internal sealed class GenerateQualityPlotPipe : IPlottingPipe
     {
         plot.Title(title);
         plot.XLabel("Partitioner");
-        plot.YLabel("Quality ratio");
+        plot.YLabel("Variance ratio");
         plot.ShowLegend(Edge.Left);
 
         plot.Axes.Margins(bottom: 0);
@@ -70,13 +70,13 @@ internal sealed class GenerateQualityPlotPipe : IPlottingPipe
     }
 }
 
-file sealed class QualityBar : Bar
+file sealed class VarianceBar : Bar
 {
-    public QualityBar(ChunkingReport report, int index)
+    public VarianceBar(ChunkingReport report, int index)
     {
         Position = index;
-        Value = report.QualityRatio;
-        Label = $"{report.QualityRatio:F2}";
+        Value = report.VarianceRatio;
+        Label = $"{report.VarianceRatio:F2}";
 
         FillColor = LineColor = PlotColors.ForIndex(index);
     }
