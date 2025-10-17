@@ -18,5 +18,6 @@ internal sealed class ChunkingReport
     public long IndexBytes { get; set; }
     public float IndexRatio { get; set; }
 
+    public float VarianceRatio { get; set; }
     public float QualityRatio { get; set; }
 }

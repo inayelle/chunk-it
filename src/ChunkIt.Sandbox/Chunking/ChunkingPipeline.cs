@@ -15,6 +15,7 @@ internal sealed class ChunkingPipeline
             .UsePipe<ExecuteChunkingPipe>()
             .UsePipe<ValidateChunksPipe>()
             .UsePipe<CalculateChunkingQualityPipe>()
+            .UsePipe<CalculateChunkVariancePipe>()
             .UsePipe<CalculateIndexSizePipe>()
             .UsePipe<CalculateFileSizePipe>()
             .UsePipe<CalculateAverageChunkSizePipe>();
