@@ -21,7 +21,7 @@ internal sealed class ThroughputRatioColumn : IColumn
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
     {
-        var result = ChunkingBenchmarkResult.FromBenchmark(benchmarkCase, summary);
+        var result = new ChunkingBenchmarkResult(summary, benchmarkCase);
 
         var baseline = summary
             .GetBenchmarkResults()

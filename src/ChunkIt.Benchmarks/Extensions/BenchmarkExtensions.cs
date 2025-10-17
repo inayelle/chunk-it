@@ -30,7 +30,7 @@ internal static class BenchmarkExtensions
     {
         return summary
             .BenchmarksCases
-            .Select(benchmark => ChunkingBenchmarkResult.FromBenchmark(benchmark, summary))
+            .Select(benchmark => new ChunkingBenchmarkResult(summary, benchmark))
             .OrderBy(entry => entry.SourceFile.Name)
             .ThenBy(entry => entry.Throughput)
             .ToArray();
@@ -40,7 +40,7 @@ internal static class BenchmarkExtensions
     {
         return summary
             .BenchmarksCases
-            .Select(benchmark => ChunkingBenchmarkResult.FromBenchmark(benchmark, summary))
+            .Select(benchmark => new ChunkingBenchmarkResult(summary, benchmark))
             .OrderBy(result => result.SourceFile.Name)
             .ThenBy(result => result.Throughput)
             .GroupBy(

@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using UnitsNet.Units;
 
 namespace ChunkIt.Benchmarks.Throughput;
 
@@ -20,9 +21,9 @@ internal sealed class ThroughputColumn : IColumn
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
     {
-        var result = ChunkingBenchmarkResult.FromBenchmark(benchmarkCase, summary);
+        var result = new ChunkingBenchmarkResult(summary, benchmarkCase);
 
-        return result.ThroughputText();
+        return result.Throughput.ToUnit(BitRateUnit.GigabitPerSecond).ToString();
     }
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style)

@@ -7,9 +7,9 @@ using UnitsNet.Units;
 
 namespace ChunkIt.Benchmarks.Exporters;
 
-internal sealed class ScottPlotMeanExporter : ScottPlotExporter
+internal sealed class ScottPlotThroughputExporter : ScottPlotExporter
 {
-    protected override string Type => "mean";
+    protected override string Type => "throughput";
 
     protected override AdaptiveMultiplot ExportToPlot(Summary summary)
     {
@@ -26,7 +26,7 @@ internal sealed class ScottPlotMeanExporter : ScottPlotExporter
 
             foreach (var (index, result) in group.Results.Index())
             {
-                var bar = new MeanBar(result, index);
+                var bar = new ThroughputBar(result, index);
 
                 var barPlot = plot.Add.Bar(bar);
                 barPlot.LegendText = result.Partitioner.ToString()!;
@@ -44,25 +44,25 @@ internal sealed class ScottPlotMeanExporter : ScottPlotExporter
     {
         plot.Title(title);
         plot.XLabel("Partitioner");
-        plot.YLabel("Mean time");
+        plot.YLabel("Throughput");
         plot.ShowLegend(Edge.Left);
 
         plot.Axes.Margins(bottom: 0);
 
         plot.Axes.Bottom.TickGenerator = new EmptyTickGenerator();
-        plot.Axes.Left.TickGenerator = new NumericWithUnitTickGenerator("ms");
+        plot.Axes.Left.TickGenerator = new NumericWithUnitTickGenerator("Gbit/s");
     }
 }
 
-file sealed class MeanBar : Bar
+file sealed class ThroughputBar : Bar
 {
-    public MeanBar(ChunkingBenchmarkResult result, int index)
+    public ThroughputBar(ChunkingBenchmarkResult result, int index)
     {
-        var mean = result.Mean.ToUnit(DurationUnit.Millisecond);
+        var throughput = result.Throughput.ToUnit(BitRateUnit.GigabitPerSecond);
 
         Position = index;
-        Value = mean.Milliseconds;
-        Label = mean.ToString();
+        Value = (double)throughput.GigabitsPerSecond;
+        Label = throughput.ToString();
 
         FillColor = LineColor = PlotColors.ForIndex(index);
     }

@@ -19,7 +19,7 @@ internal abstract class ScottPlotExporter : IExporter
         var filePath = Path.Combine(plotsDirectoryPath, fileName);
 
         var plot = ExportToPlot(summary);
-        plot.Save(filePath);
+        plot.Save(filePath, extraWidth: 500);
 
         yield return filePath;
     }
@@ -34,6 +34,8 @@ internal abstract class ScottPlotExporter : IExporter
 
 file static class SummaryExtensions
 {
+    private static readonly DateTimeOffset Now = DateTimeOffset.Now;
+
     private static string CreateRootDirectory(this Summary summary)
     {
         var rootPath = Path.Combine(summary.ResultsDirectoryPath, "plots");
@@ -50,11 +52,9 @@ file static class SummaryExtensions
     {
         var rootPath = summary.CreateRootDirectory();
 
-        var now = DateTimeOffset.Now;
-
         var workingPath = Path.Combine(
             rootPath,
-            $"{now.ToUnixTimeMilliseconds()}-{now:yyyy-MM-dd_HH-mm-ss}"
+            $"{Now.ToUnixTimeMilliseconds()}-{Now:yyyy-MM-dd_HH-mm-ss}"
         );
 
         if (!Directory.Exists(workingPath))

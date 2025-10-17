@@ -32,5 +32,6 @@ public sealed class ChunkingBenchmarkConfig : ManualConfig
         );
 
         AddExporter(new ScottPlotMeanExporter());
+        AddExporter(new ScottPlotThroughputExporter());
     }
 }

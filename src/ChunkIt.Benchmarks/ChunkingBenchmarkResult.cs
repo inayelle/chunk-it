@@ -3,36 +3,31 @@ using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using ChunkIt.Benchmarks.Extensions;
 using ChunkIt.Common.Abstractions;
-using Perfolizer.Horology;
+using UnitsNet;
 
 namespace ChunkIt.Benchmarks;
 
 internal sealed class ChunkingBenchmarkResult : IEquatable<ChunkingBenchmarkResult>
 {
-    public required SourceFile SourceFile { get; init; }
-    public required IPartitioner Partitioner { get; init; }
-    public required Statistics Statistics { get; init; }
-    public required BenchmarkCase Benchmark { get; init; }
+    public SourceFile SourceFile { get; }
+    public IPartitioner Partitioner { get; }
+    public Statistics Statistics { get; }
+    public BenchmarkCase Benchmark { get; }
 
-    public double Throughput => SourceFile.Size / Statistics.Mean;
-    public TimeInterval Mean => TimeInterval.FromNanoseconds(Statistics.Mean);
+    public Duration Mean { get; }
+    public BitRate Throughput { get; }
 
-    public string ThroughputText()
+    public ChunkingBenchmarkResult(Summary summary, BenchmarkCase benchmark)
     {
-        var throughput = Throughput * 1e9 * 8;
+        SourceFile = benchmark.GetSourceFile();
+        Partitioner = benchmark.GetPartitioner();
+        Statistics = summary[benchmark]!.ResultStatistics!;
+        Benchmark = benchmark;
 
-        return SizeUnits.BitsPerSecond(throughput);
-    }
-
-    public static ChunkingBenchmarkResult FromBenchmark(BenchmarkCase benchmark, Summary summary)
-    {
-        return new ChunkingBenchmarkResult
-        {
-            SourceFile = benchmark.GetSourceFile(),
-            Partitioner = benchmark.GetPartitioner(),
-            Statistics = summary[benchmark]!.ResultStatistics!,
-            Benchmark = benchmark,
-        };
+        Mean = Duration.FromNanoseconds(Statistics.Mean);
+        Throughput = BitRate.FromBytesPerSecond(
+            bytespersecond: SourceFile.Size / Mean.Seconds
+        );
     }
 
     public sealed class SourceFileGroup
@@ -66,34 +61,5 @@ internal sealed class ChunkingBenchmarkResult : IEquatable<ChunkingBenchmarkResu
     public override int GetHashCode()
     {
         return HashCode.Combine(SourceFile, Partitioner, Benchmark);
-    }
-}
-
-file static class SizeUnits
-{
-    private static readonly string[] Units =
-    [
-        "b",
-        "Kb",
-        "Mb",
-        "Gb",
-        "Tb",
-        "Eb",
-    ];
-
-    public static string BitsPerSecond(double value)
-    {
-        var index = 0;
-        while (value > 1024.0d)
-        {
-            value /= 1024.0d;
-            index += 1;
-        }
-
-        var unit = Units[index];
-
-        value = Math.Round(value, 2);
-
-        return $"{value} {unit}/s";
     }
 }
