@@ -1,6 +1,7 @@
+#if LEGACY
 namespace ChunkIt.Metrics.Deduplication.Plotting;
 
-internal sealed class PlottingContext
+public sealed class PlottingContext
 {
     public IReadOnlyList<ChunkingReport> Reports { get; }
 
@@ -9,3 +10,4 @@ internal sealed class PlottingContext
         Reports = reports;
     }
 }
+#endif

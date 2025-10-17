@@ -1,3 +1,4 @@
+#if LEGACY
 using AnyKit.Pipelines;
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Common.Plotting;
@@ -81,3 +82,4 @@ file sealed class QualityBar : Bar
         FillColor = LineColor = PlotColors.ForIndex(index);
     }
 }
+#endif

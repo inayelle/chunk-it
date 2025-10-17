@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>exe</OutputType>
+        <OutputType>library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ChunkIt.Hashing\ChunkIt.Hashing.csproj" />
+        <ProjectReference Include="..\ChunkIt.Metrics.Inputs\ChunkIt.Metrics.Inputs.csproj" />
         <ProjectReference Include="..\ChunkIt.Partitioning\ChunkIt.Partitioning.csproj" />
     </ItemGroup>
 

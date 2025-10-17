@@ -1,3 +1,4 @@
+#if LEGACY
 using AnyKit.Pipelines;
 
 namespace ChunkIt.Metrics.Deduplication.Plotting;
@@ -9,3 +10,4 @@ internal interface IPlottingPipe
         AsyncPipeline<PlottingContext> next
     );
 }
+#endif

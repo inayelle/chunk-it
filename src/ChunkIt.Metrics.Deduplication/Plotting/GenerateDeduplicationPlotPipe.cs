@@ -1,3 +1,4 @@
+#if LEGACY
 using System.Text;
 using AnyKit.Pipelines;
 using ChunkIt.Common.Abstractions;
@@ -112,3 +113,4 @@ internal sealed class GenerateDeduplicationPlotPipe : IPlottingPipe
         return plot;
     }
 }
+#endif

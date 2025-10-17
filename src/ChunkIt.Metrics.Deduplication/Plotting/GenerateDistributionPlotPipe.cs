@@ -1,3 +1,4 @@
+#if LEGACY
 using AnyKit.Pipelines;
 using ChunkIt.Common.Plotting;
 using ChunkIt.Metrics.Deduplication.Extensions;
@@ -66,3 +67,4 @@ internal sealed class GenerateDistributionPlotPipe : IPlottingPipe
         return histogram;
     }
 }
+#endif

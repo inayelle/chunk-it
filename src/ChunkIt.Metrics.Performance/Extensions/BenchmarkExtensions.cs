@@ -6,51 +6,29 @@ namespace ChunkIt.Metrics.Performance.Extensions;
 
 internal static class BenchmarkExtensions
 {
-    public static SourceFile GetSourceFile(this BenchmarkCase benchmarkCase)
+    public static IEnumerable<(Input Input, PerformanceReport Report)> GetPerformanceReports(
+        this Summary summary
+    )
+    {
+        foreach (var benchmark in summary.BenchmarksCases)
+        {
+            var input = benchmark.GetInput();
+
+            var statistics = summary[benchmark]!.ResultStatistics;
+
+            var report = new PerformanceReport(input.SourceFile, statistics);
+
+            yield return (input, report);
+        }
+    }
+
+    public static Input GetInput(this BenchmarkCase benchmarkCase)
     {
         return benchmarkCase
             .Parameters
             .Items
             .Select(item => item.Value)
-            .OfType<SourceFile>()
+            .OfType<Input>()
             .Single();
-    }
-
-    public static IPartitioner GetPartitioner(this BenchmarkCase benchmarkCase)
-    {
-        return benchmarkCase
-            .Parameters
-            .Items
-            .Select(item => item.Value)
-            .OfType<IPartitioner>()
-            .Single();
-    }
-
-    public static ChunkingBenchmarkResult[] GetBenchmarkResults(this Summary summary)
-    {
-        return summary
-            .BenchmarksCases
-            .Select(benchmark => new ChunkingBenchmarkResult(summary, benchmark))
-            .OrderBy(entry => entry.SourceFile.Name)
-            .ThenBy(entry => entry.Throughput)
-            .ToArray();
-    }
-
-    public static ChunkingBenchmarkResult.SourceFileGroup[] GetBenchmarkGroups(this Summary summary)
-    {
-        return summary
-            .BenchmarksCases
-            .Select(benchmark => new ChunkingBenchmarkResult(summary, benchmark))
-            .OrderBy(result => result.SourceFile.Name)
-            .ThenBy(result => result.Throughput)
-            .GroupBy(
-                entry => entry.SourceFile,
-                (sourceFile, entries) => new ChunkingBenchmarkResult.SourceFileGroup
-                {
-                    SourceFile = sourceFile,
-                    Results = entries.ToArray(),
-                }
-            )
-            .ToArray();
     }
 }

@@ -1,32 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>exe</OutputType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <Optimize>true</Optimize>
-        <InvariantGlobalization>true</InvariantGlobalization>
-        <PublishSingleFile>true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
-        <PublishAot>true</PublishAot>
-        <TieredCompilation>true</TieredCompilation>
-        <TieredPGO>true</TieredPGO>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <ReadyToRunComposite>true</ReadyToRunComposite>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>full</TrimMode>
-        <StripSymbols>true</StripSymbols>
-        <ServerGarbageCollection>true</ServerGarbageCollection>
+        <OutputType>library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ChunkIt.Hashing\ChunkIt.Hashing.csproj" />
-        <ProjectReference Include="..\ChunkIt.Partitioning\ChunkIt.Partitioning.csproj" />
+        <ProjectReference Include="..\ChunkIt.Hashing\ChunkIt.Hashing.csproj"/>
+        <ProjectReference Include="..\ChunkIt.Metrics.Inputs\ChunkIt.Metrics.Inputs.csproj"/>
+        <ProjectReference Include="..\ChunkIt.Partitioning\ChunkIt.Partitioning.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Tababular"/>
         <PackageReference Include="AnyKit.Pipelines"/>
         <PackageReference Include="System.Linq.Async"/>
     </ItemGroup>

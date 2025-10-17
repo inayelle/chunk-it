@@ -1,8 +1,9 @@
+#if LEGACY
 using AnyKit.Pipelines;
 
 namespace ChunkIt.Metrics.Deduplication.Plotting;
 
-internal sealed class PlottingPipeline
+public sealed class PlottingPipeline
 {
     private readonly AsyncPipeline<PlottingContext> _pipeline;
 
@@ -37,3 +38,4 @@ file sealed class PlottingPipelineBuilder : AsyncPipelineBuilder<PlottingContext
         return this;
     }
 }
+#endif
