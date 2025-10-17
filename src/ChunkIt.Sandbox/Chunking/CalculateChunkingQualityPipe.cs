@@ -11,11 +11,9 @@ internal sealed class CalculateChunkingQualityPipe : IChunkingPipe
     {
         var report = await next(context);
 
-        var varianceRatio = report.VarianceRatio;
-        var deduplicationRatio = report.SavedRatio;
-
-        var qualityRatio = MathF.Sqrt(varianceRatio * deduplicationRatio);
-        report.QualityRatio = qualityRatio;
+        report.QualityRatio = MathF.Sqrt(
+            report.VarianceRatio * report.SavedRatio
+        );
 
         return report;
     }
