@@ -13,15 +13,10 @@ internal abstract class ScottPlotExporter : IExporter
 
     public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
     {
-        var plotDirectoryPath = Path.Combine(summary.ResultsDirectoryPath, "plots");
+        var plotsDirectoryPath = summary.CreateWorkingDirectory();
 
-        if (!Directory.Exists(plotDirectoryPath))
-        {
-            Directory.CreateDirectory(plotDirectoryPath);
-        }
-
-        var fileName = $"plot.{Type}.png";
-        var filePath = Path.Combine(plotDirectoryPath, fileName);
+        var fileName = $"{Type}.png";
+        var filePath = Path.Combine(plotsDirectoryPath, fileName);
 
         var plot = ExportToPlot(summary);
         plot.Save(filePath);
@@ -34,5 +29,39 @@ internal abstract class ScottPlotExporter : IExporter
     public void ExportToLog(Summary summary, ILogger logger)
     {
         throw new NotSupportedException();
+    }
+}
+
+file static class SummaryExtensions
+{
+    private static string CreateRootDirectory(this Summary summary)
+    {
+        var rootPath = Path.Combine(summary.ResultsDirectoryPath, "plots");
+
+        if (!Directory.Exists(rootPath))
+        {
+            Directory.CreateDirectory(rootPath);
+        }
+
+        return rootPath;
+    }
+
+    public static string CreateWorkingDirectory(this Summary summary)
+    {
+        var rootPath = summary.CreateRootDirectory();
+
+        var now = DateTimeOffset.Now;
+
+        var workingPath = Path.Combine(
+            rootPath,
+            $"{now.ToUnixTimeMilliseconds()}-{now:yyyy-MM-dd_HH-mm-ss}"
+        );
+
+        if (!Directory.Exists(workingPath))
+        {
+            Directory.CreateDirectory(workingPath);
+        }
+
+        return workingPath;
     }
 }

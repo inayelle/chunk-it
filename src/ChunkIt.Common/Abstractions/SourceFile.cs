@@ -77,6 +77,6 @@ public sealed class SourceFile : IEquatable<SourceFile>
 
     public override string ToString()
     {
-        return $"{Path} ({Size.ToHumanReadableSize()})";
+        return $"{Name} ({Size.ToHumanReadableSize()})";
     }
 }
