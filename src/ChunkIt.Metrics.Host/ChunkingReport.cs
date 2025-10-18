@@ -13,12 +13,12 @@ public sealed class ChunkingReport
 
     public ChunkingReport(
         Input input,
-        PerformanceReport performance,
-        DeduplicationReport deduplication
+        PerformanceReport performanceReport,
+        DeduplicationReport deduplicationReport
     )
     {
         Input = input;
-        Performance = performance;
-        Deduplication = deduplication;
+        Performance = performanceReport;
+        Deduplication = deduplicationReport;
     }
 }

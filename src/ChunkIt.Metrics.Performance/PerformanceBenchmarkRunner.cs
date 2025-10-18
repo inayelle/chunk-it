@@ -4,16 +4,12 @@ using ChunkIt.Metrics.Performance.Extensions;
 
 namespace ChunkIt.Metrics.Performance;
 
-public sealed class PerformanceBenchmarkRunner : IBenchmarkRunner<PerformanceReport>
+public sealed class PerformanceBenchmarkRunner
 {
-    public Task<Dictionary<Input, PerformanceReport>> Run()
+    public IEnumerable<(Input Input, PerformanceReport Report)> Run()
     {
         var summary = BenchmarkRunner.Run<PerformanceBenchmark>();
 
-        var reports = summary
-            .GetPerformanceReports()
-            .ToDictionary(entry => entry.Input, entry => entry.Report);
-
-        return Task.FromResult(reports);
+        return summary.GetPerformanceReports();
     }
 }

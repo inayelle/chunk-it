@@ -4,16 +4,11 @@ using ChunkIt.Metrics.Inputs;
 
 namespace ChunkIt.Metrics.Deduplication;
 
-public class DeduplicationBenchmarkRunner : IBenchmarkRunner<DeduplicationReport>
+public class DeduplicationBenchmarkRunner
 {
     private readonly DeduplicationPipeline _pipeline = new();
 
-    public async Task<Dictionary<Input, DeduplicationReport>> Run()
-    {
-        return await RunCore().ToDictionaryAsync(entry => entry.Input, entry => entry.Report);
-    }
-
-    private async IAsyncEnumerable<(Input Input, DeduplicationReport Report)> RunCore()
+    public async IAsyncEnumerable<(Input Input, DeduplicationReport Report)> Run()
     {
         foreach (var input in InputsProvider.Enumerate())
         {
