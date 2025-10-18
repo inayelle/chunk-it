@@ -1,9 +1,9 @@
-using ChunkIt.Metrics.Host.Gatherer;
+using ChunkIt.Metrics.Host.Gathering;
 using UnitsNet.Units;
 
-var gatherer = new GathererPipeline();
+var gatheringPipeline = new GatheringPipeline();
 
-var reports = await gatherer.Invoke(new GathererContext());
+var reports = await gatheringPipeline.Invoke(new GatheringContext());
 
 foreach (var report in reports)
 {
@@ -11,5 +11,6 @@ foreach (var report in reports)
     Console.WriteLine($" - mean time: {report.Performance.Mean.ToUnit(DurationUnit.Millisecond)}");
     Console.WriteLine($" - throughput: {report.Performance.Throughput.ToUnit(BitRateUnit.GigabitPerSecond)}");
     Console.WriteLine($" - dedup ratio: {report.Deduplication.SavedRatio}");
+    Console.WriteLine($" - variance ratio: {report.Deduplication.VarianceRatio}");
     Console.WriteLine($" - quality ratio: {report.Deduplication.QualityRatio}");
 }

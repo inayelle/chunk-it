@@ -2,9 +2,9 @@ using ChunkIt.Common.Abstractions;
 using ChunkIt.Metrics.Deduplication;
 using ChunkIt.Metrics.Performance;
 
-namespace ChunkIt.Metrics.Host.Gatherer;
+namespace ChunkIt.Metrics.Host.Gathering;
 
-internal sealed class GathererContext
+internal sealed class GatheringContext
 {
     private readonly Dictionary<Input, PerformanceReport> _performanceReports = new();
     private readonly Dictionary<Input, DeduplicationReport> _deduplicationReports = new();
