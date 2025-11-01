@@ -1,6 +1,6 @@
 using ScottPlot;
 
-namespace ChunkIt.Common.Plotting;
+namespace ChunkIt.Metrics.Host.Plotting.Abstractions;
 
 public static class PlotColors
 {

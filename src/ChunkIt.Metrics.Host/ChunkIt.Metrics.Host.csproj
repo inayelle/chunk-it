@@ -5,8 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ChunkIt.Metrics.Deduplication\ChunkIt.Metrics.Deduplication.csproj" />
+        <ProjectReference Include="..\ChunkIt.Metrics.Deduplication\ChunkIt.Metrics.Deduplication.csproj"/>
         <ProjectReference Include="..\ChunkIt.Metrics.Performance\ChunkIt.Metrics.Performance.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ScottPlot"/>
     </ItemGroup>
 
 </Project>

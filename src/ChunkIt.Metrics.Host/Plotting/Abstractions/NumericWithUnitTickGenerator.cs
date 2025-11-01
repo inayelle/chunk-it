@@ -1,6 +1,6 @@
 using ScottPlot.TickGenerators;
 
-namespace ChunkIt.Common.Plotting;
+namespace ChunkIt.Metrics.Host.Plotting.Abstractions;
 
 public sealed class NumericWithUnitTickGenerator : NumericAutomatic
 {

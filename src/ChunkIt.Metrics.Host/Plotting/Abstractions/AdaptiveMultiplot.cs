@@ -1,7 +1,7 @@
 using ScottPlot;
 using ScottPlot.MultiplotLayouts;
 
-namespace ChunkIt.Common.Plotting;
+namespace ChunkIt.Metrics.Host.Plotting.Abstractions;
 
 public sealed class AdaptiveMultiplot : Multiplot
 {
@@ -27,5 +27,19 @@ public sealed class AdaptiveMultiplot : Multiplot
             plotWidth,
             plotHeight
         );
+    }
+
+    public static AdaptiveMultiplot WithRows(int rows, int totalCount)
+    {
+        var columns = (int)Math.Ceiling(totalCount / (double)rows);
+
+        return new AdaptiveMultiplot(rows, columns);
+    }
+
+    public static AdaptiveMultiplot WithColumns(int columns, int totalCount)
+    {
+        var rows = (int)Math.Ceiling(totalCount / (double)columns);
+
+        return new AdaptiveMultiplot(rows, columns);
     }
 }

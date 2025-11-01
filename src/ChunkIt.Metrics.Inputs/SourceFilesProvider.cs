@@ -6,6 +6,6 @@ internal static class SourceFilesProvider
 {
     public static IEnumerable<SourceFile> Enumerate()
     {
-        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/random/random-1GB.bin";
+        yield return "/storage/ina/workspace/personal/ChunkIt/inputs/json/json.json";
     }
 }
