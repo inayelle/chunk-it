@@ -8,10 +8,13 @@ internal sealed class PlottingOutput
 
     public PlottingOutput()
     {
+        var rootPath = Environment.GetEnvironmentVariable("CHUNKIT_OUTPUT_ROOT") ?? RootPath;
+        Console.WriteLine($"INF: output root path is '{rootPath}'.");
+
         var now = DateTimeOffset.Now;
 
         _currentPath = Path.Combine(
-            RootPath,
+            rootPath,
             $"{now.ToUnixTimeSeconds()}___{now:yyyy-MM-dd___HH-mm-ss}"
         );
 
