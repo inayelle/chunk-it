@@ -10,25 +10,24 @@ internal sealed class PlotDeduplicationPipe : IPlottingPipe
 {
     public Task Invoke(PlottingContext context, AsyncPipeline<PlottingContext> next)
     {
+        var multiplot = AdaptiveMultiplot.WithColumns(
+            columns: 2,
+            totalCount: context.SourceFilesCount
+        );
+
         foreach (var (sourceFile, reports) in context.Reports.GroupBySourceFile())
         {
-            var multiplot = AdaptiveMultiplot.WithRows(
-                rows: 1,
-                totalCount: 1
-            );
-
             var plot = new DeduplicationPlot(sourceFile, reports);
 
             multiplot.AddPlot(plot);
-
-            var multiplotPath = context.Output.CreatePathForOutput(
-                sourceFile.Name,
-                "deduplication",
-                "png"
-            );
-
-            multiplot.Save(multiplotPath, width: 800, height: 600);
         }
+
+        var multiplotPath = context.Output.CreatePathForOutput(
+            "deduplication",
+            "png"
+        );
+
+        multiplot.Save(multiplotPath, width: 1600, height: 800);
 
         return next(context);
     }
@@ -42,7 +41,6 @@ file sealed class DeduplicationPlot : Plot
         AddLegend(reports);
 
         Title(sourceFile.ToString());
-        XLabel("Метод фрагментації даних");
         YLabel("Коефіцієнт дедублікації");
 
         Axes.Margins(bottom: 0);
@@ -63,10 +61,9 @@ file sealed class DeduplicationPlot : Plot
 
         foreach (var (index, report) in reports.Index())
         {
+            var color = PlotColors.ForIndex(index);
             var name = report.Input.Partitioner.Name;
             var value = Math.Round(report.Deduplication.SavedRatio, 2);
-
-            var color = PlotColors.ForIndex(index);
 
             legend.ManualItems.Add(new LegendItem
                 {

@@ -10,39 +10,37 @@ internal sealed class PlotDeduplicationThroughputPipe : IPlottingPipe
 {
     public Task Invoke(PlottingContext context, AsyncPipeline<PlottingContext> next)
     {
+        var multiplot = AdaptiveMultiplot.WithColumns(
+            columns: 2,
+            totalCount: context.SourceFilesCount
+        );
+
         foreach (var (sourceFile, reports) in context.Reports.GroupBySourceFile())
         {
-            var multiplot = AdaptiveMultiplot.WithRows(
-                rows: 1,
-                totalCount: 1
-            );
-
-            var plot = new ThroughputPlot(sourceFile, reports);
+            var plot = new DeduplicationThroughputPlot(sourceFile, reports);
 
             multiplot.AddPlot(plot);
-
-            var multiplotPath = context.Output.CreatePathForOutput(
-                sourceFile.Name,
-                "deduplication_throughput",
-                "png"
-            );
-
-            multiplot.Save(multiplotPath, width: 800, height: 600);
         }
+
+        var multiplotPath = context.Output.CreatePathForOutput(
+            "deduplication_throughput",
+            "png"
+        );
+
+        multiplot.Save(multiplotPath, width: 1600, height: 800);
 
         return next(context);
     }
 }
 
-file sealed class ThroughputPlot : Plot
+file sealed class DeduplicationThroughputPlot : Plot
 {
-    public ThroughputPlot(SourceFile sourceFile, IReadOnlyCollection<ChunkingReport> reports)
+    public DeduplicationThroughputPlot(SourceFile sourceFile, IReadOnlyCollection<ChunkingReport> reports)
     {
         AddBars(reports);
         AddLegend(reports);
 
         Title(sourceFile.ToString());
-        XLabel("Метод фрагментації даних");
         YLabel("Обсяг дедублікованих даних за секунду (Gb/s)");
 
         Axes.Margins(bottom: 0);
@@ -63,10 +61,9 @@ file sealed class ThroughputPlot : Plot
 
         foreach (var (index, report) in reports.Index())
         {
+            var color = PlotColors.ForIndex(index);
             var name = report.Input.Partitioner.Name;
             var value = Math.Round(report.SavedBytesThroughput.GigabitsPerSecond, 2);
-
-            var color = PlotColors.ForIndex(index);
 
             legend.ManualItems.Add(new LegendItem
                 {

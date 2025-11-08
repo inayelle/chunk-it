@@ -9,8 +9,7 @@ internal static class SourceFilesProvider
     private static readonly string Linux = Path.Combine(Root, "linux/linux.tar");
     private static readonly string Dotnet = Path.Combine(Root, "dotnet/dotnet.tar");
     private static readonly string Gcc = Path.Combine(Root, "gcc/gcc.tar");
-    private static readonly string Random = Path.Combine(Root, "random/random-5GB.bin");
-    private static readonly string Zeros = Path.Combine(Root, "zeros/zeros-5GB.bin");
+    private static readonly string Random = Path.Combine(Root, "random/random.bin");
 
     public static IEnumerable<SourceFile> Enumerate()
     {
@@ -18,6 +17,5 @@ internal static class SourceFilesProvider
         yield return Dotnet;
         yield return Gcc;
         yield return Random;
-        yield return Zeros;
     }
 }

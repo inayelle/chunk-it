@@ -10,25 +10,24 @@ internal sealed class PlotVariancePipe : IPlottingPipe
 {
     public Task Invoke(PlottingContext context, AsyncPipeline<PlottingContext> next)
     {
+        var multiplot = AdaptiveMultiplot.WithColumns(
+            columns: 2,
+            totalCount: context.SourceFilesCount
+        );
+
         foreach (var (sourceFile, reports) in context.Reports.GroupBySourceFile())
         {
-            var multiplot = AdaptiveMultiplot.WithRows(
-                rows: 1,
-                totalCount: 1
-            );
-
             var plot = new VariancePlot(sourceFile, reports);
 
             multiplot.AddPlot(plot);
-
-            var multiplotPath = context.Output.CreatePathForOutput(
-                sourceFile.Name,
-                "variance",
-                "png"
-            );
-
-            multiplot.Save(multiplotPath, width: 800, height: 600);
         }
+
+        var multiplotPath = context.Output.CreatePathForOutput(
+            "variance",
+            "png"
+        );
+
+        multiplot.Save(multiplotPath, width: 1600, height: 800);
 
         return next(context);
     }
@@ -42,7 +41,6 @@ file sealed class VariancePlot : Plot
         AddLegend(reports);
 
         Title(sourceFile.ToString());
-        XLabel("Метод фрагментації даних");
         YLabel("Коефіцієнт девіації");
 
         Axes.Margins(bottom: 0);
@@ -63,10 +61,9 @@ file sealed class VariancePlot : Plot
 
         foreach (var (index, report) in reports.Index())
         {
+            var color = PlotColors.ForIndex(index);
             var name = report.Input.Partitioner.Name;
             var value = Math.Round(report.Deduplication.VarianceRatio, 2);
-
-            var color = PlotColors.ForIndex(index);
 
             legend.ManualItems.Add(new LegendItem
                 {
