@@ -41,7 +41,7 @@ file sealed class DeduplicationThroughputPlot : Plot
         AddLegend(reports);
 
         Title(sourceFile.ToString());
-        YLabel("Обсяг дедублікованих даних за секунду (Gb/s)");
+        YLabel("Пропускна здатність дедублікації");
 
         Axes.Margins(bottom: 0);
         Axes.Left.TickGenerator = new NumericWithUnitTickGenerator("Gb/s");

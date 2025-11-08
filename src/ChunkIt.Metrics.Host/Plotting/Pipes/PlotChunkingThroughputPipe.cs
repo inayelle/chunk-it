@@ -41,7 +41,7 @@ file sealed class ChunkingThroughputPlot : Plot
         AddLegend(reports);
 
         Title(sourceFile.ToString());
-        YLabel("Пропускна здатність (Gb/s)");
+        YLabel("Пропускна здатність фрагментації");
 
         Axes.Margins(bottom: 0);
         Axes.Left.TickGenerator = new NumericWithUnitTickGenerator("Gb/s");
