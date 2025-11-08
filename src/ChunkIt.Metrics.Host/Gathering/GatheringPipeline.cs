@@ -18,6 +18,7 @@ internal sealed class GatheringPipeline
         }
         else
         {
+            builder.UsePipe<ValidateSourceFilesPipe>();
             builder.UsePipe<GatherPerformanceReportsPipe>();
             builder.UsePipe<GatherDeduplicationReportsPipe>();
         }
