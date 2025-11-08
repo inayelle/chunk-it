@@ -15,6 +15,8 @@ public sealed partial class GearPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name => "gear";
+
     public GearPartitioner(
         int minimumChunkSize,
         int averageChunkSize,

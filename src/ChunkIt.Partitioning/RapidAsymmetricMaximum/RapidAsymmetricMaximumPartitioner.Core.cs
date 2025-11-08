@@ -12,6 +12,8 @@ public sealed partial class RapidAsymmetricMaximumPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name => "ram";
+
     public RapidAsymmetricMaximumPartitioner(
         int minimumChunkSize,
         int averageChunkSize,

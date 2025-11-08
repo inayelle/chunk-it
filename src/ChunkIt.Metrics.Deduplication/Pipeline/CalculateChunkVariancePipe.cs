@@ -20,9 +20,11 @@ internal sealed class CalculateChunkVariancePipe : IDeduplicationPipe
 
     private static float CalculateVariance(DeduplicationContext context)
     {
-        var minimumChunkSize = context.Input.Partitioner.MinimumChunkSize;
-        var averageChunkSize = context.Input.Partitioner.AverageChunkSize;
-        var maximumChunkSize = context.Input.Partitioner.MaximumChunkSize;
+        var partitioner = context.Input.Partitioner;
+
+        var minimumChunkSize = partitioner.MinimumChunkSize;
+        var averageChunkSize = partitioner.AverageChunkSize;
+        var maximumChunkSize = partitioner.MaximumChunkSize;
 
         var maxLeftDrift = averageChunkSize - minimumChunkSize;
         var maxRightDrift = maximumChunkSize - averageChunkSize;

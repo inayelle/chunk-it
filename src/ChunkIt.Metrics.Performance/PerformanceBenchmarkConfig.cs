@@ -9,7 +9,7 @@ public sealed class PerformanceBenchmarkConfig : ManualConfig
 {
     public PerformanceBenchmarkConfig()
     {
-        SummaryStyle = SummaryStyle.Default.WithMaxParameterColumnWidth(64);
+        SummaryStyle = SummaryStyle.Default.WithMaxParameterColumnWidth(128);
 
         WithOptions(ConfigOptions.DisableLogFile);
 

@@ -12,7 +12,11 @@ internal sealed class PlottingPipeline
         var builder = new PlottingPipelineBuilder();
 
         builder
-            .UsePipe<PlotChunkDistributionPipe>();
+            .UsePipe<PlotChunkingThroughputPipe>()
+            .UsePipe<PlotDeduplicationThroughputPipe>()
+            .UsePipe<PlotDeduplicationPipe>()
+            .UsePipe<PlotVariancePipe>()
+            .UsePipe<PlotQualityPipe>();
 
         _pipeline = builder.Build();
     }

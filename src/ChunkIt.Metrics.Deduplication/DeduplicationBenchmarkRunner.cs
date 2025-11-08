@@ -1,3 +1,4 @@
+using ChunkIt.Common;
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Metrics.Deduplication.Pipeline;
 using ChunkIt.Metrics.Inputs;
@@ -6,7 +7,13 @@ namespace ChunkIt.Metrics.Deduplication;
 
 public class DeduplicationBenchmarkRunner
 {
+    private readonly IProgressReporter _progressReporter;
     private readonly DeduplicationPipeline _pipeline = new();
+
+    public DeduplicationBenchmarkRunner(IProgressReporter progressReporter)
+    {
+        _progressReporter = progressReporter;
+    }
 
     public async IAsyncEnumerable<(Input Input, DeduplicationReport Report)> Run()
     {
@@ -20,7 +27,7 @@ public class DeduplicationBenchmarkRunner
 
     private async Task<DeduplicationReport> GenerateReport(Input input)
     {
-        var context = new DeduplicationContext(input, _ => { });
+        var context = new DeduplicationContext(input, _progressReporter);
 
         return await _pipeline.Invoke(context);
     }

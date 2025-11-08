@@ -1,6 +1,7 @@
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Metrics.Deduplication;
 using ChunkIt.Metrics.Performance;
+using UnitsNet;
 
 namespace ChunkIt.Metrics.Host;
 
@@ -10,6 +11,8 @@ public sealed class ChunkingReport : IComparable<ChunkingReport>
 
     public PerformanceReport Performance { get; }
     public DeduplicationReport Deduplication { get; }
+
+    public BitRate SavedBytesThroughput { get; }
 
     public IReadOnlyList<Chunk> Chunks => Deduplication.Chunks;
 
@@ -22,6 +25,10 @@ public sealed class ChunkingReport : IComparable<ChunkingReport>
         Input = input;
         Performance = performanceReport;
         Deduplication = deduplicationReport;
+
+        SavedBytesThroughput = BitRate.FromBytesPerSecond(
+            deduplicationReport.SavedBytes / performanceReport.Mean.Seconds
+        );
     }
 
     public int CompareTo(ChunkingReport other)

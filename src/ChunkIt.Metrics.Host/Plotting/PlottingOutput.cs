@@ -15,7 +15,10 @@ internal sealed class PlottingOutput
             $"{now.ToUnixTimeSeconds()}___{now:yyyy-MM-dd___HH-mm-ss}"
         );
 
-        Directory.CreateDirectory(_currentPath);
+        if (!Directory.Exists(_currentPath))
+        {
+            Directory.CreateDirectory(_currentPath);
+        }
     }
 
     public string CreatePathForOutput(params ReadOnlySpan<string> fragments)

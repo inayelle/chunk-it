@@ -17,16 +17,18 @@ public sealed class AdaptiveMultiplot : Multiplot
         Subplots.RemoveAt(0);
     }
 
-    public void Save(string path, int extraWidth = 0, int extraHeight = 0)
+    public void Save(
+        string path,
+        int? width = null,
+        int? height = null,
+        int? extraWidth = null,
+        int? extraHeight = null
+    )
     {
-        var plotWidth = 700 * Columns + extraWidth;
-        var plotHeight = 500 * Rows + extraHeight;
+        width ??= 700 * Columns + (extraWidth ?? 0);
+        height ??= 500 * Rows + (extraHeight ?? 0);
 
-        this.SavePng(
-            path,
-            plotWidth,
-            plotHeight
-        );
+        this.SavePng(path, width.Value, height.Value);
     }
 
     public static AdaptiveMultiplot WithRows(int rows, int totalCount)

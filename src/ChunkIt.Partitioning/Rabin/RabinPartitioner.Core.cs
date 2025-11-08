@@ -21,6 +21,8 @@ public sealed partial class RabinPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name => "rabin";
+
     private readonly int _winSlidePos;
     private readonly ulong _cutMask;
 

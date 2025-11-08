@@ -12,6 +12,8 @@ public sealed partial class FixedPartitioner
     public int AverageChunkSize => _chunkSize;
     public int MaximumChunkSize => _chunkSize;
 
+    public string Name => "fixed";
+
     public FixedPartitioner(int chunkSize)
     {
         _chunkSize = chunkSize;

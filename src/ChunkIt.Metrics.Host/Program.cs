@@ -1,7 +1,7 @@
 using ChunkIt.Metrics.Host.Gathering;
 using ChunkIt.Metrics.Host.Plotting;
 
-var gatheringPipeline = new GatheringPipeline();
+var gatheringPipeline = new GatheringPipeline(mockPerformanceReports: true, mockDeduplicationReports: true);
 
 var reports = await gatheringPipeline.Invoke(new GatheringContext());
 

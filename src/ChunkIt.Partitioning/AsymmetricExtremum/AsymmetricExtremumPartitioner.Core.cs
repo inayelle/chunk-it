@@ -12,6 +12,8 @@ public sealed partial class AsymmetricExtremumPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name => "ae";
+
     public AsymmetricExtremumPartitioner(
         int minimumChunkSize,
         int averageChunkSize,

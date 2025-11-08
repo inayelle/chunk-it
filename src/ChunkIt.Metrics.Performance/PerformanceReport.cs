@@ -15,4 +15,11 @@ public sealed class PerformanceReport
 
         Throughput = BitRate.FromBytesPerSecond(sourceFile.Size / Mean.Seconds);
     }
+
+    public PerformanceReport(SourceFile sourceFile, double meanNanoseconds)
+    {
+        Mean = Duration.FromNanoseconds(meanNanoseconds);
+
+        Throughput = BitRate.FromBytesPerSecond(sourceFile.Size / Mean.Seconds);
+    }
 }

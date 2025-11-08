@@ -17,6 +17,8 @@ public sealed partial class FastPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name => "fast";
+
     public FastPartitioner(
         int minimumChunkSize,
         int averageChunkSize,

@@ -20,11 +20,13 @@ public sealed partial class SequentialPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name { get; }
+
     public SequentialPartitioner(
-        SequentialPartitionerMode mode,
         int minimumChunkSize,
         int averageChunkSize,
         int maximumChunkSize,
+        SequentialPartitionerMode mode,
         int sequenceLength,
         int skipLength,
         int skipTrigger
@@ -43,6 +45,13 @@ public sealed partial class SequentialPartitioner
         {
             SequentialPartitionerMode.Increasing => SequentialComparators.IsIncreasing,
             SequentialPartitionerMode.Decreasing => SequentialComparators.IsDecreasing,
+            _ => throw new ArgumentOutOfRangeException(nameof(mode)),
+        };
+
+        Name = mode switch
+        {
+            SequentialPartitionerMode.Increasing => "seq-incr",
+            SequentialPartitionerMode.Decreasing => "seq-decr",
             _ => throw new ArgumentOutOfRangeException(nameof(mode)),
         };
     }

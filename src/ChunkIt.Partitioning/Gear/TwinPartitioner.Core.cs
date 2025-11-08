@@ -17,6 +17,8 @@ public sealed partial class TwinPartitioner
     public int AverageChunkSize { get; }
     public int MaximumChunkSize { get; }
 
+    public string Name { get; }
+
     public TwinPartitioner(
         int minimumChunkSize,
         int averageChunkSize,
@@ -52,6 +54,8 @@ public sealed partial class TwinPartitioner
 
         _normalizationLevel = normalizationLevel;
         _mask = GenerateMask(averageChunkSize, normalizationLevel);
+
+        Name = _leftGearTable.Equals(_rightGearTable) ? "twin-mono" : "twin-duo";
     }
 
     public int FindChunkLength(ReadOnlySpan<byte> buffer)
