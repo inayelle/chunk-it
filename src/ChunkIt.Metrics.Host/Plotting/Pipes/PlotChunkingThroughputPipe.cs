@@ -27,7 +27,7 @@ internal sealed class PlotChunkingThroughputPipe : IPlottingPipe
             "png"
         );
 
-        multiplot.Save(multiplotPath, width: 1600, height: 800);
+        multiplot.Save(multiplotPath, width: 1600, height: 600);
 
         return next(context);
     }
