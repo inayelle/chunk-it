@@ -1,6 +1,5 @@
 using ChunkIt.Common.Abstractions;
 using ChunkIt.Partitioning.AsymmetricExtremum;
-using ChunkIt.Partitioning.Fixed;
 using ChunkIt.Partitioning.Gear;
 using ChunkIt.Partitioning.Gear.Table;
 using ChunkIt.Partitioning.Rabin;
@@ -19,8 +18,6 @@ internal static class PartitionersProvider
 
     public static IEnumerable<IPartitioner> Enumerate()
     {
-        yield return new FixedPartitioner(chunkSize: AverageChunkSize);
-
         yield return new RabinPartitioner(
             minimumChunkSize: MinimumChunkSize,
             averageChunkSize: AverageChunkSize,

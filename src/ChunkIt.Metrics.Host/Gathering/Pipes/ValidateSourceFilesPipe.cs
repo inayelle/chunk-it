@@ -10,34 +10,27 @@ internal sealed class ValidateSourceFilesPipe : IGatheringPipe
         AsyncPipeline<GatheringContext, IReadOnlyList<ChunkingReport>> next
     )
     {
-        var sourceFiles = InputsProvider
+        var missingSourceFiles = InputsProvider
             .Enumerate()
             .Select(input => input.SourceFile)
-            .Distinct();
+            .Distinct()
+            .Where(file => !file.Exists)
+            .ToArray();
 
-        var sourceFileNotFound = false;
-
-        foreach (var sourceFile in sourceFiles)
+        if (missingSourceFiles.Length > 0)
         {
-            var sourceFileExists = File.Exists(sourceFile.Path);
+            Console.ForegroundColor = ConsoleColor.Red;
 
-            if (sourceFileExists)
+            Console.Error.WriteLine("ERR: One or more source files are missing.");
+
+            foreach (var missingSourceFile in missingSourceFiles)
             {
-                Console.WriteLine($"INF: source file found at '{sourceFile.Path}'.");
+                Console.Error.WriteLine($"     - {missingSourceFile.Path} - not found");
             }
-            else
-            {
-                sourceFileNotFound = true;
 
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error.WriteLine($"ERR: source file '{sourceFile.Path}' does not exist.");
-                Console.ResetColor();
-            }
-        }
+            Console.ResetColor();
 
-        if (sourceFileNotFound)
-        {
-            throw new ApplicationException("One or more source files were not found.");
+            Environment.Exit(1);
         }
 
         return next(context);

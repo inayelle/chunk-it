@@ -7,19 +7,30 @@ internal sealed class GatheringPipeline
 {
     private readonly AsyncPipeline<GatheringContext, IReadOnlyList<ChunkingReport>> _pipeline;
 
-    public GatheringPipeline(bool mock = false)
+    public GatheringPipeline(
+        bool mockPerformanceReports = false,
+        bool mockDeduplicationReports = false
+    )
     {
         var builder = new GatheringPipelineBuilder();
 
-        if (mock)
+        builder.UsePipe<ValidateSourceFilesPipe>();
+
+        if (mockPerformanceReports)
         {
             builder.UsePipe<MockPerformanceReportsPipe>();
+        }
+        else
+        {
+            builder.UsePipe<GatherPerformanceReportsPipe>();
+        }
+
+        if (mockDeduplicationReports)
+        {
             builder.UsePipe<MockDeduplicationReportsPipe>();
         }
         else
         {
-            builder.UsePipe<ValidateSourceFilesPipe>();
-            builder.UsePipe<GatherPerformanceReportsPipe>();
             builder.UsePipe<GatherDeduplicationReportsPipe>();
         }
 

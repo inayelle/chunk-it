@@ -7,6 +7,7 @@ public sealed class SourceFile : IEquatable<SourceFile>
     public string Path { get; }
     public string Name { get; }
     public long Size { get; }
+    public bool Exists { get; }
 
     public SourceFile(string path)
     {
@@ -15,6 +16,7 @@ public sealed class SourceFile : IEquatable<SourceFile>
         Path = fileInfo.FullName;
         Name = fileInfo.Name;
         Size = fileInfo.Length;
+        Exists = fileInfo.Exists;
     }
 
     public FileStream OpenFileStream(
