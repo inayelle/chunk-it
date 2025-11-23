@@ -9,7 +9,6 @@ internal sealed class PlottingOutput
     public PlottingOutput()
     {
         var rootPath = Environment.GetEnvironmentVariable("CHUNKIT_OUTPUT_ROOT") ?? RootPath;
-        Console.WriteLine($"INF: output root path is '{rootPath}'.");
 
         var now = DateTimeOffset.Now;
 
@@ -22,6 +21,8 @@ internal sealed class PlottingOutput
         {
             Directory.CreateDirectory(_currentPath);
         }
+
+        Console.WriteLine($"INF: output path is '{_currentPath}'.");
     }
 
     public string CreatePathForOutput(params ReadOnlySpan<string> fragments)

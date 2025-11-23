@@ -16,7 +16,8 @@ internal sealed class PlottingPipeline
             .UsePipe<PlotDeduplicationThroughputPipe>()
             .UsePipe<PlotDeduplicationPipe>()
             .UsePipe<PlotVariancePipe>()
-            .UsePipe<PlotQualityPipe>();
+            .UsePipe<PlotQualityPipe>()
+            .UsePipe<PersistReportsPipe>();
 
         _pipeline = builder.Build();
     }
