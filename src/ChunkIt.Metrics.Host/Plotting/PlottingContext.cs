@@ -9,7 +9,6 @@ internal sealed class PlottingContext
     public PlottingOutput Output { get; }
 
     public int SourceFilesCount { get; }
-    public int PartitionersCount { get; }
 
     public PlottingContext(IReadOnlyList<ChunkingReport> reports)
     {
@@ -18,11 +17,6 @@ internal sealed class PlottingContext
 
         SourceFilesCount = Reports
             .Select(report => report.Input.SourceFile)
-            .Distinct()
-            .Count();
-
-        PartitionersCount = Reports
-            .Select(report => report.Input.Partitioner)
             .Distinct()
             .Count();
     }

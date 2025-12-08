@@ -18,11 +18,9 @@ internal sealed class MockDeduplicationReportsPipe : IGatheringPipe
             var report = new DeduplicationReport([])
             {
                 AverageChunkSize = _random.Next(input.Partitioner.MinimumChunkSize, input.Partitioner.MaximumChunkSize),
-                IndexBytes = 1488,
                 SavedBytes = 1488,
-                IndexRatio = _random.NextSingle(),
-                QualityRatio = _random.NextSingle(),
                 SavedRatio = _random.NextSingle(),
+                QualityRatio = _random.NextSingle(),
                 VarianceRatio = _random.NextSingle(),
             };
 

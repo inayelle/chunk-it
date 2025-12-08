@@ -15,7 +15,6 @@ public sealed class DeduplicationPipeline
             .UsePipe<ValidateChunksPipe>()
             .UsePipe<CalculateDeduplicationQualityPipe>()
             .UsePipe<CalculateChunkVariancePipe>()
-            .UsePipe<CalculateIndexSizePipe>()
             .UsePipe<CalculateFileSizePipe>()
             .UsePipe<CalculateAverageChunkSizePipe>()
             .UsePipe<CreateDeduplicationReportPipe>();

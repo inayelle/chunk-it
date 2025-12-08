@@ -11,9 +11,6 @@ public sealed class DeduplicationReport
     public long SavedBytes { get; set; }
     public float SavedRatio { get; set; }
 
-    public long IndexBytes { get; set; }
-    public float IndexRatio { get; set; }
-
     public float VarianceRatio { get; set; }
     public float QualityRatio { get; set; }
 
